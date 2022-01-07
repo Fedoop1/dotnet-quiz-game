@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "cCIc0EQH0jh/GK225g2VrWeuWlI9C/ysIfFxofL4s5A=",
+  "Source": "DotNetQuiz.WebApi",
+  "BasePath": "_content/DotNetQuiz.WebApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
