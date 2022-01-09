@@ -8,6 +8,12 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DotNetQuiz.BLL\DotNetQuiz.BLL.csproj" />
   </ItemGroup>
 
 </Project>
