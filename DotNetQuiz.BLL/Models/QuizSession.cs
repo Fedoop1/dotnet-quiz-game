@@ -24,14 +24,20 @@ namespace DotNetQuiz.BLL.Models
 
             this.UploadPlayers(quizPlayers);
         }
-        public RoundStatistic BuildRoundStatistic() => this.roundStatisticAnalyzer.BuildRoundStatistic(this.CurrentRound);
+
+        public RoundStatistic BuildRoundStatistic(QuizRound round)
+        {
+            ArgumentNullException.ThrowIfNull(round, nameof(round));
+
+            return this.roundStatisticAnalyzer.BuildRoundStatistic(round);
+        }
 
         public void SubmitAnswer(QuizPlayerAnswer answer)
         {
             ArgumentNullException.ThrowIfNull(answer, nameof(answer));
 
             this.ProcessPlayerAnswer(answer);
-            this.CurrentRound.Answers.Add(answer);
+            (this.CurrentRound.Answers as IList<QuizPlayerAnswer>)!.Add(answer);
         }
 
         public QuizRound NextRound()
@@ -43,7 +49,8 @@ namespace DotNetQuiz.BLL.Models
             {
                 CurrentQuestion = nextQuestion, 
                 StartAt = new TimeOnly(currentTime),
-                EndAt = new TimeOnly(currentTime + TimeSpan.FromSeconds(this.quizConfiguration.RoundDuration).Ticks)
+                EndAt = new TimeOnly(currentTime + TimeSpan.FromSeconds(this.quizConfiguration.RoundDuration).Ticks),
+                Answers = new List<QuizPlayerAnswer>()
             };
 
             return CurrentRound;
