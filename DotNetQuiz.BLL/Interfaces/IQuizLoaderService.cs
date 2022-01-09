@@ -2,7 +2,7 @@
 
 namespace DotNetQuiz.BLL.Interfaces
 {
-    internal interface IQuizLoaderService
+    public interface IQuizLoaderService
     {
         QuizQuestionPack LoadPack();
     }

@@ -9,6 +9,7 @@ namespace DotNetQuiz.BLL.Interfaces
         void RemovePlayerFromSession(int playerId);
         void StartGame();
         void SubmitAnswer(QuizPlayerAnswer answer);
+        RoundStatistic GetRoundStatistic(QuizRound round);
         QuizRound NextRound();
     }
 }
