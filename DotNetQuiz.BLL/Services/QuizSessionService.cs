@@ -56,6 +56,8 @@ namespace DotNetQuiz.BLL.Services
             }
         }
 
+        public RoundStatistic GetRoundStatistic(QuizRound round) => this.quizSession.BuildRoundStatistic(round);
+
         public void StartGame()
         {
             this.ValidateSessionState(SessionState.NotStarted, SessionAlreadyStartedErrorMessage);
