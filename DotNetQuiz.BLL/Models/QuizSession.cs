@@ -8,6 +8,7 @@ namespace DotNetQuiz.BLL.Models
         private readonly IRoundStatisticAnalyzer roundStatisticAnalyzer;
         private readonly QuizConfiguration quizConfiguration;
         private readonly Dictionary<int, QuizPlayer> quizPlayers = new ();
+        private int questionsLeft;
 
         public QuizRound CurrentRound { get; private set; }
 
@@ -23,6 +24,8 @@ namespace DotNetQuiz.BLL.Models
             this.roundStatisticAnalyzer = roundStatisticAnalyzer;
 
             this.UploadPlayers(quizPlayers);
+
+            this.questionsLeft = this.quizConfiguration.QuestionPack.Questions.Count;
         }
 
         public RoundStatistic BuildRoundStatistic(QuizRound round)
@@ -42,14 +45,19 @@ namespace DotNetQuiz.BLL.Models
 
         public QuizRound NextRound()
         {
+            if (--questionsLeft < 0)
+            {
+                throw new ArgumentOutOfRangeException("There are no more questions.");
+            }
+
             var nextQuestion = this.questionHandler.NextQuestion();
-            var currentTime = DateTime.Now.Ticks;
+            var currentTime = new TimeOnly(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
             this.CurrentRound = new QuizRound()
             {
                 CurrentQuestion = nextQuestion, 
-                StartAt = new TimeOnly(currentTime),
-                EndAt = new TimeOnly(currentTime + TimeSpan.FromSeconds(this.quizConfiguration.RoundDuration).Ticks),
+                StartAt = currentTime,
+                EndAt = currentTime.Add(TimeSpan.FromSeconds(this.quizConfiguration.RoundDuration)),
                 Answers = new List<QuizPlayerAnswer>()
             };
 
@@ -72,10 +80,10 @@ namespace DotNetQuiz.BLL.Models
 
                 var streakMultiplier = this.quizConfiguration.StreakMultiplier * player.PlayerStreak;
 
-                player.PlayerScore += (int)Math.Floor(this.questionHandler.CurrentQuestion.QuestionReward +
-                    (timeBonus > 0 ? timeBonus : 0) * streakMultiplier >= 1
+                player.PlayerScore += (int)(Math.Floor(this.questionHandler.CurrentQuestion.QuestionReward +
+                    (timeBonus > 0 ? timeBonus : 0)) * (streakMultiplier >= 1
                         ? streakMultiplier
-                        : 1);
+                        : 1));
                 return;
             }
 
@@ -87,7 +95,16 @@ namespace DotNetQuiz.BLL.Models
         {
             foreach (var player in players)
             {
-                this.quizPlayers[player.PlayerId] = player;
+                if (this.quizPlayers.Count + 1 > this.quizConfiguration.MaxPlayers)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(player),
+                        "The count of players can't be more than set in configuration");
+                }
+
+                if(!this.quizPlayers.TryAdd(player.PlayerId, player))
+                {
+                    throw new ArgumentException($"Player with id = {player.PlayerId} already exists");
+                }
             }
         }
     }
