@@ -22,13 +22,13 @@ namespace DotNetQuiz.Client.Infrastructure.Services
 
             return new RoundStatistic()
             {
-                AverageAnswerTime = new TimeSpan(averageAnswerTime),
+                AverageAnswerTime = TimeSpan.FromMilliseconds(averageAnswerTime),
                 AnswerStatistic = answerStatistic,
             };
         }
 
-        private long CalculateAverageAnswerTime(IEnumerable<QuizPlayerAnswer> answers) =>
-            (long)Math.Floor(answers.Select(a => a.AnswerTime).Average());
+        private double CalculateAverageAnswerTime(IEnumerable<QuizPlayerAnswer> answers) =>
+            answers.Select(a => a.AnswerTime).Average();
 
         private IEnumerable<KeyValuePair<string, int>> CalculateAnswerStatistic(IEnumerable<QuizPlayerAnswer> answers)
         {
