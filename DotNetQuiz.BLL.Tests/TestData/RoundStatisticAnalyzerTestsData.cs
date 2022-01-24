@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using DotNetQuiz.BLL.Models;
+﻿using DotNetQuiz.BLL.Models;
 using NUnit.Framework;
 
 namespace DotNetQuiz.BLL.Tests.TestData;
