@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
-using DotNetQuiz.BLL.Interfaces;
+﻿using DotNetQuiz.BLL.Interfaces;
 using DotNetQuiz.BLL.Models;
 using Moq;
 using NUnit.Framework;
 
-using static DotNetQuiz.BLL.Tests.QuizSessionTestsData;
+using static DotNetQuiz.BLL.Tests.TestData.QuizSessionTestsData;
 
 namespace DotNetQuiz.BLL.Tests;
 
