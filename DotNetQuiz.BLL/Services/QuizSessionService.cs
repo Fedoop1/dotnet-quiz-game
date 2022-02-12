@@ -9,12 +9,12 @@ namespace DotNetQuiz.BLL.Services
         private const string SessionIsNotStartedErrorMessage = "Session is not established!";
         private const string SessionAlreadyStartedErrorMessage = "Session is already started!";
 
+        private readonly Dictionary<int, QuizPlayer> sessionPlayers = new();
+        private readonly IQuestionHandler questionHandler;
+        private readonly IRoundStatisticAnalyzer roundStatisticAnalyzer;
+
         private QuizSession quizSession;
         private QuizConfiguration configuration;
-        private Dictionary<int, QuizPlayer> sessionPlayers;
-        private IQuestionHandler questionHandler;
-        private IRoundStatisticAnalyzer roundStatisticAnalyzer;
-        private SessionState sessionState = SessionState.NotStarted;
 
         public QuizSessionService(IQuestionHandler questionHandler, IRoundStatisticAnalyzer roundStatisticAnalyzer)
         {
@@ -24,6 +24,10 @@ namespace DotNetQuiz.BLL.Services
             this.questionHandler = questionHandler;
             this.roundStatisticAnalyzer = roundStatisticAnalyzer;
         }
+
+        public QuizRound CurrentRound { get; private set; }
+        public IReadOnlyCollection<QuizPlayer> SessionPlayers => this.sessionPlayers.Values;
+        public SessionState SessionState { get; private set; } = SessionState.NotStarted;
 
         public void UploadQuizConfiguration(QuizConfiguration configuration)
         {
@@ -39,7 +43,7 @@ namespace DotNetQuiz.BLL.Services
 
             playerNickName ??= "player" + playerId;
 
-            if (this.sessionPlayers.TryAdd(playerId,
+            if (!this.sessionPlayers.TryAdd(playerId,
                     new QuizPlayer { PlayerId = playerId, PlayerNickName = playerNickName }))
             {
                 throw new ArgumentException($"Player with id [{playerId}] already exists");
@@ -48,21 +52,24 @@ namespace DotNetQuiz.BLL.Services
 
         public void RemovePlayerFromSession(int playerId)
         {
-            this.ValidateSessionState(SessionState.NotStarted, SessionAlreadyStartedErrorMessage);
-
             if (!this.sessionPlayers.Remove(playerId))
             {
-                throw new ArgumentException("Player with current id doesn't exist");
+                throw new ArgumentException($"Player with id [{playerId}] doesn't exist");
             }
         }
 
-        public RoundStatistic GetRoundStatistic(QuizRound round) => this.quizSession.BuildRoundStatistic(round);
+        public RoundStatistic BuildCurrentRoundStatistic()
+        {
+            this.ValidateSessionState(SessionState.Running, SessionIsNotStartedErrorMessage);
+
+            return this.quizSession.BuildRoundStatistic(this.CurrentRound);
+        }
 
         public void StartGame()
         {
             this.ValidateSessionState(SessionState.NotStarted, SessionAlreadyStartedErrorMessage);
 
-            this.sessionState = SessionState.Running;
+            this.SessionState = SessionState.Running;
             this.quizSession = new QuizSession(this.configuration, this.sessionPlayers.Values.AsEnumerable(),
                 this.questionHandler, this.roundStatisticAnalyzer);
         }
@@ -75,16 +82,15 @@ namespace DotNetQuiz.BLL.Services
             this.quizSession.SubmitAnswer(answer);
         }
 
-        public QuizRound NextRound()
+        public void NextRound()
         {
             this.ValidateSessionState(SessionState.Running, SessionIsNotStartedErrorMessage);
-
-            return this.quizSession.NextRound();
+            this.CurrentRound = this.quizSession.NextRound();
         }
 
         private void ValidateSessionState(SessionState expectedResult, string errorMessage)
         {
-            if (this.sessionState == expectedResult)
+            if (this.SessionState != expectedResult)
             {
                 throw new ArgumentException(errorMessage);
             }
