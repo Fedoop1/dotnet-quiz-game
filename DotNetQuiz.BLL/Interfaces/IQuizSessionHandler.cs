@@ -3,14 +3,14 @@ using DotNetQuiz.BLL.Models.enums;
 
 namespace DotNetQuiz.BLL.Interfaces
 {
-    public interface IQuizSessionService
+    public interface IQuizSessionHandler
     {
-        QuizRound CurrentRound { get; }
+        Guid QuizHandlerId { get; }
+        QuizRound CurrentSessionRound { get; }
         IReadOnlyCollection<QuizPlayer> SessionPlayers { get; }
         SessionState SessionState { get; }
-
         void UploadQuizConfiguration(QuizConfiguration configuration);
-        void AddPlayerToSession(int playerId, string? playerNickName);
+        void AddPlayerToSession(QuizPlayer quizPlayer);
         void RemovePlayerFromSession(int playerId);
         void StartGame();
         void SubmitAnswer(QuizPlayerAnswer answer);

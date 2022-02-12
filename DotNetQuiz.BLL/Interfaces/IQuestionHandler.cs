@@ -4,7 +4,6 @@ namespace DotNetQuiz.BLL.Interfaces
 {
     public interface IQuestionHandler
     {
-        QuizQuestion CurrentQuestion { get; }
-        QuizQuestion NextQuestion();
+        QuizQuestion? NextQuestion(IEnumerable<QuizQuestion> questions);
     }
 }

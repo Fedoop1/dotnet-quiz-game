@@ -4,6 +4,6 @@ namespace DotNetQuiz.BLL.Interfaces
 {
     public interface IRoundStatisticAnalyzer
     {
-        RoundStatistic BuildRoundStatistic(QuizRound quizRound);
+        RoundStatistic BuildRoundStatistic(QuizRound quizRound, QuizConfiguration quizConfiguration);
     }
 }
