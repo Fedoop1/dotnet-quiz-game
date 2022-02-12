@@ -8,6 +8,7 @@ namespace DotNetQuiz.BLL.Models
         private readonly IRoundStatisticAnalyzer roundStatisticAnalyzer;
         private readonly QuizConfiguration quizConfiguration;
         private readonly Dictionary<int, QuizPlayer> quizPlayers = new ();
+
         private int questionsLeft;
 
         public QuizRound CurrentRound { get; private set; }
@@ -26,14 +27,11 @@ namespace DotNetQuiz.BLL.Models
             this.UploadPlayers(quizPlayers);
 
             this.questionsLeft = this.quizConfiguration.QuestionPack.Questions.Count;
+            this.CurrentRound = NextRound();
         }
 
-        public RoundStatistic BuildRoundStatistic(QuizRound round)
-        {
-            ArgumentNullException.ThrowIfNull(round, nameof(round));
-
-            return this.roundStatisticAnalyzer.BuildRoundStatistic(round);
-        }
+        public RoundStatistic BuildCurrentRoundStatistic() =>
+            this.roundStatisticAnalyzer.BuildRoundStatistic(this.CurrentRound, this.quizConfiguration);
 
         public void SubmitAnswer(QuizPlayerAnswer answer)
         {
@@ -45,12 +43,17 @@ namespace DotNetQuiz.BLL.Models
 
         public QuizRound NextRound()
         {
+            if (this.CurrentRound is not null)
+            {
+                this.CurrentRound.CurrentQuestion.isCompleted = true;
+            }
+
             if (--questionsLeft < 0)
             {
                 throw new ArgumentOutOfRangeException("There are no more questions.");
             }
 
-            var nextQuestion = this.questionHandler.NextQuestion();
+            var nextQuestion = this.questionHandler.NextQuestion(this.quizConfiguration.QuestionPack.Questions);
             var currentTime = new TimeOnly(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
             this.CurrentRound = new QuizRound()
@@ -66,21 +69,24 @@ namespace DotNetQuiz.BLL.Models
 
         private void ProcessPlayerAnswer(QuizPlayerAnswer playerAnswer)
         {
-            var player = this.quizPlayers[playerAnswer.QuizPlayerId];
+            if (!this.quizPlayers.TryGetValue(playerAnswer.PlayerId, out var player))
+            {
+                throw new ArgumentException($"Player with id [{player.Id}] doesn't exist");
+            }
 
-            if (this.questionHandler.CurrentQuestion.Answer!.AnswerContent.Equals(playerAnswer.AnswerContent,
+            if (this.CurrentRound.CurrentQuestion.Answer!.AnswerContent.Equals(playerAnswer.AnswerContent,
                     this.quizConfiguration.AnswerIgnoreCase
                         ? StringComparison.InvariantCultureIgnoreCase
                         : StringComparison.InvariantCulture))
             {
-                player.PlayerStreak += 1;
+                player.Streak += 1;
 
                 var timeBonus = this.quizConfiguration.TimeMultiplier *
                                 (this.quizConfiguration.RoundDuration - playerAnswer.AnswerTime / 1000);
 
-                var streakMultiplier = this.quizConfiguration.StreakMultiplier * player.PlayerStreak;
+                var streakMultiplier = this.quizConfiguration.StreakMultiplier * player.Streak;
 
-                player.PlayerScore += (int)(Math.Floor(this.questionHandler.CurrentQuestion.QuestionReward +
+                player.Score += (int)(Math.Floor(this.CurrentRound.CurrentQuestion.QuestionReward +
                     (timeBonus > 0 ? timeBonus : 0)) * (streakMultiplier >= 1
                         ? streakMultiplier
                         : 1));
@@ -88,7 +94,7 @@ namespace DotNetQuiz.BLL.Models
             }
 
             // Wrong answer.
-            player.PlayerStreak = 0;
+            player.Streak = 0;
         }
 
         private void UploadPlayers(IEnumerable<QuizPlayer> players)
@@ -101,9 +107,9 @@ namespace DotNetQuiz.BLL.Models
                         "The count of players can't be more than set in configuration");
                 }
 
-                if(!this.quizPlayers.TryAdd(player.PlayerId, player))
+                if(!this.quizPlayers.TryAdd(player.Id, player))
                 {
-                    throw new ArgumentException($"Player with id = {player.PlayerId} already exists");
+                    throw new ArgumentException($"Player with id [{player.Id}] already exists");
                 }
             }
         }
