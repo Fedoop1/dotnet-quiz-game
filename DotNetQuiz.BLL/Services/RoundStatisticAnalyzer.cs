@@ -1,42 +1,35 @@
 ﻿using DotNetQuiz.BLL.Interfaces;
 using DotNetQuiz.BLL.Models;
 
-namespace DotNetQuiz.Client.Infrastructure.Services
+namespace DotNetQuiz.BLL.Services;
+
+public class RoundStatisticAnalyzer : IRoundStatisticAnalyzer
 {
-    public class RoundStatisticAnalyzer : IRoundStatisticAnalyzer
+    public RoundStatistic BuildRoundStatistic(QuizRound quizRound, QuizConfiguration configuration)
     {
-        private readonly QuizConfiguration configuration;
-        public RoundStatisticAnalyzer(QuizConfiguration configuration)
+        ArgumentNullException.ThrowIfNull(quizRound, nameof(quizRound));
+        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
+
+        var answerStatistic = this.CalculateAnswerStatistic(quizRound.Answers, configuration.AnswerIgnoreCase);
+        var averageAnswerTime = CalculateAverageAnswerTime(quizRound.Answers);
+
+        return new RoundStatistic()
         {
-            ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
+            AverageAnswerTime = TimeSpan.FromMilliseconds(averageAnswerTime),
+            AnswerStatistic = answerStatistic,
+        };
+    }
 
-            this.configuration = configuration;
-        }
+    private double CalculateAverageAnswerTime(IEnumerable<QuizPlayerAnswer> answers) =>
+        answers.Select(a => a.AnswerTime).Average();
 
-        public RoundStatistic BuildRoundStatistic(QuizRound quizRound)
-        {
-            ArgumentNullException.ThrowIfNull(quizRound, nameof(quizRound));
+    private IEnumerable<KeyValuePair<string, int>> CalculateAnswerStatistic(IEnumerable<QuizPlayerAnswer> answers, bool ignoreCase)
+    {
+        var answersStatistic = answers.GroupBy(a =>
+                ignoreCase ? a.AnswerContent.ToLowerInvariant() : a.AnswerContent)
+            .ToDictionary(k => k.Key, v => v.Count());
 
-            var answerStatistic = this.CalculateAnswerStatistic(quizRound.Answers);
-            var averageAnswerTime = CalculateAverageAnswerTime(quizRound.Answers);
-
-            return new RoundStatistic()
-            {
-                AverageAnswerTime = TimeSpan.FromMilliseconds(averageAnswerTime),
-                AnswerStatistic = answerStatistic,
-            };
-        }
-
-        private double CalculateAverageAnswerTime(IEnumerable<QuizPlayerAnswer> answers) =>
-            answers.Select(a => a.AnswerTime).Average();
-
-        private IEnumerable<KeyValuePair<string, int>> CalculateAnswerStatistic(IEnumerable<QuizPlayerAnswer> answers)
-        {
-            var answersStatistic = answers.GroupBy(a =>
-                    this.configuration.AnswerIgnoreCase ? a.AnswerContent.ToLowerInvariant() : a.AnswerContent)
-                .ToDictionary(k => k.Key, v => v.Count());
-
-            return answersStatistic;
-        }
+        return answersStatistic;
     }
 }
+
