@@ -34,10 +34,10 @@ internal static class QuizSessionTestsData
 
         QuizPlayers = new QuizPlayer[] 
         {
-            new () { PlayerId = 1, PlayerNickName = "nickname1" },
-            new () { PlayerId = 2, PlayerNickName = "nickname2" },
-            new () { PlayerId = 3, PlayerNickName = "nickname3" },
-            new () { PlayerId = 4, PlayerNickName = "nickname4" },
+            new () { Id = 1, NickName = "nickname1" },
+            new () { Id = 2, NickName = "nickname2" },
+            new () { Id = 3, NickName = "nickname3" },
+            new () { Id = 4, NickName = "nickname4" },
         };
     }
 }
