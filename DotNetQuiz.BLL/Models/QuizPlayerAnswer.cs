@@ -2,7 +2,7 @@
 {
     public class QuizPlayerAnswer
     {
-        public int QuizPlayerId { get; set; }
+        public int PlayerId { get; set; }
         public string AnswerContent { get; set; }
 
         // In milliseconds

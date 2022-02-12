@@ -6,6 +6,7 @@
         public int QuestionReward { get; set; }
         public QuestionContent? Content { get; set; }
         public QuestionAnswer? Answer { get; set; }
+        public bool isCompleted { get; set; }
 
         public int CompareTo(QuizQuestion? other)
         {
