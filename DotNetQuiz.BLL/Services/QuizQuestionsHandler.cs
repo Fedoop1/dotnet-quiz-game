@@ -3,10 +3,11 @@ using DotNetQuiz.BLL.Models;
 
 namespace DotNetQuiz.BLL.Services
 {
-    internal class QuizQuestionsHandler: IQuestionHandler
+    public class QuizQuestionsHandler: IQuestionHandler
     {
-        public QuizQuestion CurrentQuestion => quizQuestions.Peek();
         private Queue<QuizQuestion> quizQuestions;
+
+        public QuizQuestion CurrentQuestion => quizQuestions.Peek();
 
         public QuizQuestionsHandler(IEnumerable<QuizQuestion> quizQuestions)
         {
