@@ -11,7 +11,7 @@ public class QuizHandlersManager : IQuizHandlersManager
     {
         ArgumentNullException.ThrowIfNull(handler, nameof(handler));
 
-        if (this.sessionHandlersStorage.TryAdd(sessionId, handler))
+        if (!this.sessionHandlersStorage.TryAdd(sessionId, handler))
         {
             throw new ArgumentException($"Quiz session handler with id [{sessionId}] already exist");
         }

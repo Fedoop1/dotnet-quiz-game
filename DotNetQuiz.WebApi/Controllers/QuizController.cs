@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using DotNetQuiz.BLL.Models;
 using DotNetQuiz.WebApi.Infrastructure.Extensions;
 using DotNetQuiz.WebApi.Infrastructure.Filters;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DotNetQuiz.WebApi.Controllers
 {
     [ApiController]
+    [Route("api/[controller]")]
     [ExceptionHandlerFilter]
     public class QuizController : ControllerBase
     {
@@ -24,8 +26,18 @@ namespace DotNetQuiz.WebApi.Controllers
             (this.logger, this.sessionHandlerFactory, this.handlersManager, this.hubsConnectionManager, this.hubsFactory) =
             (logger, sessionHandlerFactory, handlersManager, hubsConnectionManager, hubsFactory);
 
+        [Route("")]
+        public JsonResult Info()
+        {
+            return new JsonResult(new { controllers = nameof(QuizController), actions = new []
+            {
+                typeof(QuizController).GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public).Select(m => m.Name)
+            } });
+        }
+
 
         [HttpPost]
+        [Route("[action]")]
         public IActionResult Create()
         {
             var quizSessionHandler = this.sessionHandlerFactory.CreateSessionHandler();
@@ -38,6 +50,7 @@ namespace DotNetQuiz.WebApi.Controllers
         }
 
         [HttpPost]
+        [Route("[action]/{sessionId:guid}")]
         [SessionFilter]
         public IActionResult Configure(Guid sessionId, [Required(ErrorMessage = "Quiz Configuration is required!")] QuizConfiguration quizConfiguration)
         {
@@ -48,6 +61,7 @@ namespace DotNetQuiz.WebApi.Controllers
         }
 
         [HttpPost]
+        [Route("{sessionId:guid}/[action]/")]
         [SessionFilter]
         public IActionResult AddPlayer(Guid sessionId, QuizPlayerModel player)
         {
@@ -58,6 +72,7 @@ namespace DotNetQuiz.WebApi.Controllers
         }
 
         [HttpPost]
+        [Route("{sessionId:guid}/[action]/{playerId:int}")]
         [SessionFilter]
         public IActionResult RemovePlayer(Guid sessionId, [Range(1, int.MaxValue)] int playerId)
         {
@@ -68,6 +83,7 @@ namespace DotNetQuiz.WebApi.Controllers
         }
 
         [HttpGet]
+        [Route("{sessionId:guid}/[action]")]
         [SessionFilter]
         public IActionResult BuildRoundStatistic(Guid sessionId)
         {
@@ -82,6 +98,7 @@ namespace DotNetQuiz.WebApi.Controllers
         }
 
         [HttpGet]
+        [Route("{sessionId:guid}/[action]")]
         [SessionFilter]
         public IActionResult StartGame(Guid sessionId)
         {
@@ -92,6 +109,7 @@ namespace DotNetQuiz.WebApi.Controllers
         }
 
         [HttpGet]
+        [Route("{sessionId:guid}/[action]")]
         [SessionFilter]
         public IActionResult NextRound(Guid sessionId)
         {
