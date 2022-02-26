@@ -12,6 +12,7 @@ builder.Services.AddSingleton<IQuestionHandler, QuizQuestionsHandler>();
 builder.Services.AddSingleton<IRoundStatisticAnalyzer, RoundStatisticAnalyzer>();
 builder.Services.AddSingleton<IQuizSessionHandlersFactory, QuizSessionHandlersFactory>();
 builder.Services.AddSingleton<IQuizHandlersManager, QuizHandlersManager>();
+builder.Services.AddSingleton<IQuizHubsConnectionManager, QuizHubsConnectionManager>();
 
 var app = builder.Build();
 
