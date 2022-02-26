@@ -1,0 +1,50 @@
+<div class="create-session">
+    <div class="session-header">
+        <h1>Create session</h1>
+    </div>
+        <div class="controls-container">
+            <div class="common-control">
+                <label for="maxPlayers" class="input-label">
+                    Max players:
+                </label>
+                <input name="maxPlayers" class="common-input" [(ngModel)]="quizConfiguration.maxPlayers">
+            </div>
+            <div class="common-control">
+                <label for="streakMultiplier" class="input-label">
+                    Streak multiplier:
+                </label>
+                <input name="streakMultiplier" class="common-input" [(ngModel)]="quizConfiguration.streakMultiplier" type="text">
+            </div>
+            <div class="common-control">
+                <label for="timeMultiplier" class="input-label">
+                    Time Multiplier:
+                </label>
+                <input name="timeMultiplier" class="common-input" [(ngModel)]="quizConfiguration.timeMultiplier" type="text">
+            </div>
+            <div class="common-control">
+                <label for="answerIgnoreCase" class="input-label">
+                    Answer ignore case:
+                </label>
+                <input name="answerIgnoreCase" class="common-input" [(ngModel)]="quizConfiguration.answerIgnoreCase"
+                    type="checkbox">
+            </div>
+            <div class="common-control">
+                <label for="questionPack" class="input-label">
+                    Question Pack:
+                </label>
+                <input name="questionPack" class="common-input" [(ngModel)]="quizConfiguration.questionPack" type="file"
+                    [accept]="'.json'">
+            </div>
+    </div>
+    <div class="validation-error-container">
+        <p class="validation-error" *ngFor="let validationError of validationErrors">{{ validationError }}</p>
+    </div>
+    <div class="validation-error-container">
+        <p *ngIf="errorMessage" class="validation-error">{{ errorMessage }}</p>
+    </div>
+    <div class="confirmation-button">
+        <button (click)="onCreateSessionClick()">Create session</button>
+    </div>
+</div>
+
+
