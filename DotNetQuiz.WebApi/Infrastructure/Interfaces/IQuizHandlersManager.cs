@@ -4,7 +4,7 @@ namespace DotNetQuiz.WebApi.Infrastructure.Interfaces
 {
     public interface IQuizHandlersManager
     {
-        public void AddSessionHandler(IQuizSessionHandler handler);
+        public void AddSessionHandler(Guid sessionId, IQuizSessionHandler handler);
         public IQuizSessionHandler? GetSessionHandler(Guid sessionId);
     }
 }

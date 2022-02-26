@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DotNetQuiz.BLL.Models;
+using DotNetQuiz.WebApi.Infrastructure.Extensions;
 using DotNetQuiz.WebApi.Infrastructure.Filters;
 using DotNetQuiz.WebApi.Infrastructure.Helpers;
 using DotNetQuiz.WebApi.Infrastructure.Interfaces;
@@ -15,18 +16,23 @@ namespace DotNetQuiz.WebApi.Controllers
         private readonly ILogger logger;
         private readonly IQuizSessionHandlersFactory sessionHandlerFactory;
         private readonly IQuizHandlersManager handlersManager;
+        private readonly IQuizHubsFactory hubsFactory;
+        private readonly IQuizHubsConnectionManager hubsConnectionManager;
 
         public QuizController(ILogger<QuizController> logger, IQuizSessionHandlersFactory sessionHandlerFactory,
-            IQuizHandlersManager handlersManager) =>
-            (this.logger, this.sessionHandlerFactory, this.handlersManager) =
-            (logger, sessionHandlerFactory, handlersManager);
+            IQuizHandlersManager handlersManager, IQuizHubsConnectionManager hubsConnectionManager, IQuizHubsFactory hubsFactory) =>
+            (this.logger, this.sessionHandlerFactory, this.handlersManager, this.hubsConnectionManager, this.hubsFactory) =
+            (logger, sessionHandlerFactory, handlersManager, hubsConnectionManager, hubsFactory);
 
 
         [HttpPost]
         public IActionResult Create()
         {
             var quizSessionHandler = this.sessionHandlerFactory.CreateSessionHandler();
-            this.handlersManager.AddSessionHandler(quizSessionHandler);
+            var quizHub = this.hubsFactory.CreateQuizHub(quizSessionHandler);
+
+            this.handlersManager.AddSessionHandler(quizSessionHandler.QuizHandlerId, quizSessionHandler);
+            this.hubsConnectionManager.AddQuizSessionHub(quizSessionHandler.QuizHandlerId, quizHub);
 
             return Ok(quizSessionHandler.QuizHandlerId);
         }
@@ -36,7 +42,7 @@ namespace DotNetQuiz.WebApi.Controllers
         public IActionResult Configure(Guid sessionId, [Required(ErrorMessage = "Quiz Configuration is required!")] QuizConfiguration quizConfiguration)
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
-            sessionHandler.UploadQuizConfiguration(quizConfiguration);
+            sessionHandler!.UploadQuizConfiguration(quizConfiguration);
 
             return Ok();
         }
@@ -46,7 +52,7 @@ namespace DotNetQuiz.WebApi.Controllers
         public IActionResult AddPlayer(Guid sessionId, QuizPlayerModel player)
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
-            sessionHandler.AddPlayerToSession(player.ToQuizPlayer());
+            sessionHandler!.AddPlayerToSession(player.ToQuizPlayer());
 
             return Ok();
         }
@@ -56,7 +62,7 @@ namespace DotNetQuiz.WebApi.Controllers
         public IActionResult RemovePlayer(Guid sessionId, [Range(1, int.MaxValue)] int playerId)
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
-            sessionHandler.RemovePlayerFromSession(playerId);
+            sessionHandler!.RemovePlayerFromSession(playerId);
 
             return Ok();
         }
@@ -66,8 +72,13 @@ namespace DotNetQuiz.WebApi.Controllers
         public IActionResult BuildRoundStatistic(Guid sessionId)
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
+            var quizHub = this.hubsConnectionManager.GetQuizSessionHub(sessionId);
 
-            return Ok(sessionHandler.BuildCurrentRoundStatistic());
+            var currentRoundStatistic = sessionHandler!.BuildCurrentRoundStatistic();
+
+            quizHub?.SendRoundStatisticAsync(currentRoundStatistic);
+
+            return Ok(currentRoundStatistic);
         }
 
         [HttpGet]
@@ -75,7 +86,7 @@ namespace DotNetQuiz.WebApi.Controllers
         public IActionResult StartGame(Guid sessionId)
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
-            sessionHandler.StartGame();
+            sessionHandler!.StartGame();
 
             return Ok();
         }
@@ -85,10 +96,12 @@ namespace DotNetQuiz.WebApi.Controllers
         public IActionResult NextRound(Guid sessionId)
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
-            sessionHandler.NextRound();
+            var sessionHub = this.hubsConnectionManager.GetQuizSessionHub(sessionId);
+
+            sessionHandler!.NextRound();
+            sessionHub?.SendQuestionAsync(sessionHandler.CurrentSessionRound.ToQuizRoundModel());
 
             return Ok();
         }
-       
     }
 }
