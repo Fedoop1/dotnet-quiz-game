@@ -14,7 +14,7 @@ namespace DotNetQuiz.BLL.Services
         private readonly IRoundStatisticAnalyzer roundStatisticAnalyzer;
 
         private QuizSession quizSession;
-        private QuizConfiguration configuration;
+        private QuizConfiguration configuration = new ();
 
         public QuizSessionHandler(IQuestionHandler questionHandler, IRoundStatisticAnalyzer roundStatisticAnalyzer)
         {
@@ -24,10 +24,11 @@ namespace DotNetQuiz.BLL.Services
             this.questionHandler = questionHandler;
             this.roundStatisticAnalyzer = roundStatisticAnalyzer;
 
-            this.QuizHandlerId = Guid.NewGuid();
+            this.SessionId = Guid.NewGuid();
         }
 
-        public Guid QuizHandlerId { get; }
+        public Guid SessionId { get; }
+        public QuizConfiguration QuizConfiguration => this.configuration;
         public QuizRound CurrentSessionRound { get; private set; }
         public IReadOnlyCollection<QuizPlayer> SessionPlayers => this.sessionPlayers.Values;
         public SessionState SessionState { get; private set; } = SessionState.NotStarted;

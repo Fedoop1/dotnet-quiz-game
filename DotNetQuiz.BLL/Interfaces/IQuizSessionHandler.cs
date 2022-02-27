@@ -5,7 +5,8 @@ namespace DotNetQuiz.BLL.Interfaces
 {
     public interface IQuizSessionHandler
     {
-        Guid QuizHandlerId { get; }
+        Guid SessionId { get; }
+        QuizConfiguration QuizConfiguration { get; }
         QuizRound CurrentSessionRound { get; }
         IReadOnlyCollection<QuizPlayer> SessionPlayers { get; }
         SessionState SessionState { get; }

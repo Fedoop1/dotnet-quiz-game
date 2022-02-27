@@ -43,10 +43,10 @@ namespace DotNetQuiz.WebApi.Controllers
             var quizSessionHandler = this.sessionHandlerFactory.CreateSessionHandler();
             var quizHub = this.hubsFactory.CreateQuizHub(quizSessionHandler);
 
-            this.handlersManager.AddSessionHandler(quizSessionHandler.QuizHandlerId, quizSessionHandler);
-            this.hubsConnectionManager.AddQuizSessionHub(quizSessionHandler.QuizHandlerId, quizHub);
+            this.handlersManager.AddSessionHandler(quizSessionHandler.SessionId, quizSessionHandler);
+            this.hubsConnectionManager.AddQuizSessionHub(quizSessionHandler.SessionId, quizHub);
 
-            return Ok(quizSessionHandler.QuizHandlerId);
+            return Ok(quizSessionHandler.SessionId);
         }
 
         [HttpPost]
@@ -58,6 +58,13 @@ namespace DotNetQuiz.WebApi.Controllers
             sessionHandler!.UploadQuizConfiguration(quizConfiguration);
 
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult GetQuizSessions()
+        {
+            return Ok(this.handlersManager.GetAllSessionHandlers().Select(h => h.ToQuizSessionModel()));
         }
 
         [HttpPost]

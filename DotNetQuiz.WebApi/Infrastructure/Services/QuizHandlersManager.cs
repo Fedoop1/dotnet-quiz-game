@@ -19,4 +19,6 @@ public class QuizHandlersManager : IQuizHandlersManager
 
     public IQuizSessionHandler? GetSessionHandler(Guid sessionId) =>
         !this.sessionHandlersStorage.TryGetValue(sessionId, out var quizSessionHandler) ? null : quizSessionHandler;
+
+    public IEnumerable<IQuizSessionHandler> GetAllSessionHandlers() => this.sessionHandlersStorage.Values;
 }

@@ -10,7 +10,6 @@ namespace DotNetQuiz.BLL.Models
         private readonly Dictionary<int, QuizPlayer> quizPlayers = new ();
 
         private int questionsLeft;
-
         public QuizRound CurrentRound { get; private set; }
 
         public QuizSession(QuizConfiguration quizConfiguration, IEnumerable<QuizPlayer> quizPlayers, IQuestionHandler questionHandler, IRoundStatisticAnalyzer roundStatisticAnalyzer)
