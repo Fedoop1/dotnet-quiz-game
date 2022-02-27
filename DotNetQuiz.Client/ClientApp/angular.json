@@ -26,9 +26,10 @@
             "assets": [
               "src/assets"
             ],
+            "inlineStyleLanguage": "scss",
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -94,8 +95,9 @@
             "assets": [
               "src/assets"
             ],
+            "inlineStyleLanguage": "scss",
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           }

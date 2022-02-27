@@ -1,0 +1,19 @@
+.common-control {
+  margin: 12px 0px;
+}
+
+.common-input {
+  border-radius: 6px;
+
+  input[type="file"] {
+    display: none;
+  }
+}
+
+.input-label {
+  margin-right: 8px;
+
+  &-file {
+    width: 100%;
+  }
+}

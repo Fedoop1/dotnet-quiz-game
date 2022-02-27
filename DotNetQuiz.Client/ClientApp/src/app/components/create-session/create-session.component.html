@@ -29,8 +29,8 @@
                     type="checkbox">
             </div>
             <div class="common-control">
-                <label for="questionPack" class="input-label">
-                    Question Pack:
+                <label for="questionPack" class="input-label input-label-file">
+                    Upload Question Pack:
                 </label>
                 <input name="questionPack" class="common-input" [(ngModel)]="quizConfiguration.questionPack" type="file"
                     [accept]="'.json'">
@@ -42,8 +42,8 @@
     <div class="validation-error-container">
         <p *ngIf="errorMessage" class="validation-error">{{ errorMessage }}</p>
     </div>
-    <div class="confirmation-button">
-        <button (click)="onCreateSessionClick()">Create session</button>
+    <div class="buttons-container">
+        <button (click)="onCreateSessionClick()" class="confirmation-button">Create session</button>
     </div>
 </div>
 

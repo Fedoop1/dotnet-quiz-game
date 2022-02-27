@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 6002",
+    "start": "ng serve",
     "build": "ng build",
     "build:ssr": "ng run DotNetQuiz.Client:server:dev",
     "watch": "ng build --watch --configuration development",

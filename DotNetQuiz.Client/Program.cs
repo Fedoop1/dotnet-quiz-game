@@ -1,28 +1,17 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
 builder.Services.AddSpaStaticFiles(config => config.RootPath = "ClientApp");
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
-{
-}
 
 app.UseStaticFiles();
 app.UseSpaStaticFiles();
 
-app.UseRouting();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
-
-app.UseSpa(config =>
+app.MapFallback(async context =>
 {
-    config.Options.SourcePath = "ClientApp";
+    context.Response.ContentType = "text/html";
+    await context.Response.SendFileAsync(Path.Combine("ClientApp", "dist", "index.html"));
 });
-
-app.MapFallbackToFile("index.html");
 
 app.Run();
