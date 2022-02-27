@@ -4,6 +4,12 @@
     </div>
         <div class="controls-container">
             <div class="common-control">
+                <label for="roundDuration" class="input-label">
+                    Round duration:
+                </label>
+                <input name="roundDuration" class="common-input" [(ngModel)]="quizConfiguration.roundDuration">
+            </div>
+            <div class="common-control">
                 <label for="maxPlayers" class="input-label">
                     Max players:
                 </label>
@@ -28,22 +34,30 @@
                 <input name="answerIgnoreCase" class="common-input" [(ngModel)]="quizConfiguration.answerIgnoreCase"
                     type="checkbox">
             </div>
-            <div class="common-control">
+            <div class="common-control-file">
                 <label for="questionPack" class="input-label input-label-file">
-                    Upload Question Pack:
+                    Upload Question Pack
                 </label>
                 <input name="questionPack" class="common-input" [(ngModel)]="quizConfiguration.questionPack" type="file"
                     [accept]="'.json'">
             </div>
     </div>
-    <div class="validation-error-container">
-        <p class="validation-error" *ngFor="let validationError of validationErrors">{{ validationError }}</p>
+    <div *ngIf="isShowValidationError" class="validation-error-container" >
+        <h3 class="validation-error-container-title">Invalid quiz configuration!</h3>
+        <p class="validation-error">
+            Round duration greater or equals 5 sec.<br>
+            Max players greater or equals 1<br>
+            Streak multiplier greater or equals 1<br>
+            Time multiplier greater or equals 1<br>
+            Question pack in JSON format
+        </p>
     </div>
-    <div class="validation-error-container">
-        <p *ngIf="errorMessage" class="validation-error">{{ errorMessage }}</p>
+    <div *ngIf="errorMessage" class="validation-error-container">
+        <p  class="validation-error">{{ errorMessage }}</p>
     </div>
     <div class="buttons-container">
-        <button (click)="onCreateSessionClick()" class="confirmation-button">Create session</button>
+        <button (click)="onBackButtonClick()" class="common-button common-button__back">Back</button>
+        <button (click)="onCreateSessionClick()" class="common-button common-button__confirmation">Create session</button>
     </div>
 </div>
 

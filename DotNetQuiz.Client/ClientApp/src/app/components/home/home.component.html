@@ -1,5 +1,13 @@
-<button (click)="OnCreateSessionClick()">Create session</button>
-<button (click)="OnJoinToSessionClick()">Join to existing session</button>
-<div *ngIf="errorMessage" class="error-container">
-    <p class="error-message">{{errorMessage}}</p>
+<div class="home-page">
+    <div class="menu-container">
+            <div class="menu-container-item">
+                <button class="common-button menu-button" (click)="OnCreateSessionClick()">Create session</button>
+            </div>
+            <div class="menu-container-item">
+                <button class="common-button menu-button" (click)="OnJoinToSessionClick()">Join to existing session</button>
+            </div>
+    </div>
+    <div *ngIf="errorMessage" class="error-container">
+        <p class="error-message">{{errorMessage}}</p>
+    </div>
 </div>

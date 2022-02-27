@@ -1,6 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  Router,
+} from '@angular/router';
 import { NEVER } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { DefaultQuestionPack } from 'src/app/models/constants/default-question-pack';
@@ -21,19 +25,20 @@ export class CreateSessionComponent {
     answerIgnoreCase: false,
   } as QuizConfiguration;
 
-  public validationErrors: string[] = [];
+  public isShowValidationError: boolean = false;
   public errorMessage?: string;
 
   constructor(
     private readonly quizService: QuizService,
+    private readonly router: Router,
     private readonly route: ActivatedRoute
   ) {}
 
   public onCreateSessionClick() {
-    this.hideValidationErrorMessage();
+    this.isShowValidationError = false;
 
-    if (!this.validateQuizConfiguration) {
-      this.showValidationErrorMessage();
+    if (!this.validateQuizConfiguration()) {
+      this.isShowValidationError = true;
       return;
     }
 
@@ -50,18 +55,8 @@ export class CreateSessionComponent {
       );
   }
 
-  private showValidationErrorMessage() {
-    this.validationErrors.push('Invalid quiz configuration!');
-    this.validationErrors.push('Validation rules:');
-    this.validationErrors.push('Round duration greater or equals 5 sec.');
-    this.validationErrors.push('Max players greater or equals 1');
-    this.validationErrors.push('Streak multiplier greater or equals 1');
-    this.validationErrors.push('Time multiplier greater or equals 1');
-    this.validationErrors.push('Question pack in JSON format');
-  }
-
-  private hideValidationErrorMessage() {
-    this.validationErrors = [];
+  public onBackButtonClick() {
+    this.router.navigate(['home']);
   }
 
   private validateQuizConfiguration(): boolean {

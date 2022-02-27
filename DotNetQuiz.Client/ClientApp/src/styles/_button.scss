@@ -1,6 +1,21 @@
-.confirmation-button {
+.common-button {
   border-radius: 5px;
-  background-color: rgba(10, 190, 91, 0.788);
+  border-width: 0px;
+  padding: 6px 18px;
+  max-width: 240px;
   color: white;
-  max-width: 120px;
+  font-size: 17px;
+  text-align: center;
+
+  &__confirmation {
+    background-color: rgba(10, 190, 91, 0.788);
+  }
+
+  &__back {
+    background-color: rgb(8, 136, 187);
+  }
+}
+
+.common-button:disabled {
+  background-color: rgb(122, 122, 122) !important;
 }

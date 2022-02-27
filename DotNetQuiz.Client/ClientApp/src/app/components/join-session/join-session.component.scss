@@ -1,0 +1,54 @@
+@use "/src/styles/variables";
+
+.join-session {
+  margin: 120px auto;
+  max-width: 500px;
+
+  .session-list-actions {
+    margin-bottom: 10px;
+  }
+
+  .session-list {
+    border-radius: 6px;
+
+    &-item {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      background-color: rgba(253, 186, 186, 0.863);
+
+      .session-info {
+        display: flex;
+        flex-direction: column;
+
+        &-actions {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+
+          p {
+            margin: 0;
+          }
+
+          &__button {
+            background-color: rgb(216, 96, 27);
+          }
+        }
+
+        &__status--running {
+          color: rgb(233, 86, 86);
+        }
+
+        &__status--not-started {
+          color: rgb(2, 143, 44);
+        }
+
+        &__title {
+          width: 100%;
+          margin: 0;
+        }
+      }
+    }
+  }
+}

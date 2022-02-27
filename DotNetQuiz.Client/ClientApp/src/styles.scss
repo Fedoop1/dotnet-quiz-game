@@ -1,3 +1,12 @@
-@import "styles/button";
-@import "styles/container";
-@import "styles/control";
+@use "styles/button";
+@use "styles/container";
+@use "styles/control";
+@use "styles/variables";
+
+html,
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  height: 100%;
+  background-image: linear-gradient(to bottom right, #eb690c, 20%, #eb2a0c);
+}

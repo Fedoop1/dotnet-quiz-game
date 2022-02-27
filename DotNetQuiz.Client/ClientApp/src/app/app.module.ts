@@ -10,9 +10,20 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CreateSessionComponent } from './components/create-session/create-session.component';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { JoinSessionComponent } from './components/join-session/join-session.component';
+import { SessionStatusPipe } from './components/join-session/pipes/session-status.pipe';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, CreateSessionComponent],
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    CreateSessionComponent,
+    JoinSessionComponent,
+    SessionStatusPipe,
+  ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     CommonModule,
@@ -21,7 +32,11 @@ import { RouterModule } from '@angular/router';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    BrowserAnimationsModule,
+    MatIconModule,
+    MatButtonModule,
   ],
+  exports: [MatIconModule, MatButtonModule],
   providers: [QuizService],
   bootstrap: [AppComponent],
 })

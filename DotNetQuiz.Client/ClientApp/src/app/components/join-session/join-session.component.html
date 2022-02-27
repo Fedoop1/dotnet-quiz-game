@@ -1,0 +1,36 @@
+<div class="join-session">
+    <div class="buttons-container session-list-actions">
+        <div class="session-list-action">
+            <button mat-icon-button (click)="onHomeButtonClick()">
+                <mat-icon>home</mat-icon>
+            </button>
+        </div>
+        <div class="session-list-action">
+            <button mat-icon-button (click)="onRefreshButtonClick()">
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </div>
+    </div> 
+    <div class="session-list">
+        <div class="session-list-item" *ngFor="let session of quizSessions, let i = index">
+            <div>
+                <div class="session-info">
+                    <h4 class="session-info__title"><b>{{i + 1}}. Session id: {{session.sessionId}}</b></h4>
+                </div>
+                <div class="session-info">
+                    <p class="session-info__status" [ngClass]="[session.sessionState === QuizSessionStatus.Running ? 'session-info__status--running' : 'session-info__status--not-started']">Session status: {{session.sessionState | sessionStatus}}</p>
+                </div>
+                <div class="session-info">
+                    <div class="session-info-actions">
+                        <p class="session-info__players">{{session.countOfPlayers}} / {{ session.maxPlayers }}</p>
+                        <button class="common-button session-info-actions__button"
+                            [disabled]="isSessionDisabled(session)"
+                            (click)="onJoinButtonClick(session.sessionId)">
+                            Join
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

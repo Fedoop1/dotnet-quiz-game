@@ -1,13 +1,17 @@
 .common-control {
-  margin: 12px 0px;
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0px;
+
+  &-file {
+    display: flex;
+    align-content: space-between;
+  }
 }
 
 .common-input {
   border-radius: 6px;
-
-  input[type="file"] {
-    display: none;
-  }
+  border-width: 0px;
 }
 
 .input-label {

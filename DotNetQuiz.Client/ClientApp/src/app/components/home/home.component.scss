@@ -1,0 +1,19 @@
+.home-page {
+  margin: 220px auto;
+  .menu-container {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+
+    &-item {
+      margin-top: 20px;
+    }
+
+    .menu-button {
+      min-width: 220px;
+      width: 100%;
+      background-image: linear-gradient(to bottom right, #e2b052, 20%, #e46b08);
+    }
+  }
+}
