@@ -1,9 +1,15 @@
 .create-session {
-  margin: 120px auto;
-  padding: 20px;
-  max-width: 500px;
-  background-color: rgba(255, 255, 255, 0.863);
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  &-content {
+    max-width: 500px;
+    background-color: rgb(95 15 15 / 86%);
+    border-radius: 8px;
+    padding: 20px;
+  }
 
   .session-header {
     width: 100%;

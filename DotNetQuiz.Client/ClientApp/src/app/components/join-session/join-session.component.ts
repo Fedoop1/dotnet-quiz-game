@@ -48,7 +48,7 @@ export class JoinSessionComponent implements OnInit {
   }
 
   public onJoinButtonClick(sessionId: string) {
-    this.router.navigate(['create-player'], {
+    this.router.navigate(['create-account'], {
       queryParams: { sessionId: sessionId },
     });
   }

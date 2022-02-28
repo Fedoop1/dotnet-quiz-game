@@ -1,5 +1,25 @@
 <div class="create-account">
-    <label for="userName" class="input-label">User Name:</label>
-    <input name="userName" type="text" class="common-input">
+  <div class="create-account-content">
+    <label for="nickName" class="input-label">User Name:</label>
+    <input
+      name="nickName"
+      type="text"
+      class="common-input"
+      [(ngModel)]="nickName"
+    />
+    <div class="buttons-container">
+      <button
+        class="common-button create-account-submit"
+        (click)="onBackButtonClick()"
+      >
+        Back
+      </button>
+      <button
+        class="common-button create-account-submit"
+        (click)="onJoinButtonClick()"
+      >
+        Join
+      </button>
+    </div>
+  </div>
 </div>
-

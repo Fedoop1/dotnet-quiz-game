@@ -41,6 +41,23 @@ export class QuizService {
       .pipe(catchError(this.catchResponseError));
   }
 
+  public addPlayer(
+    nickName: string,
+    userId: number,
+    sessionId: string
+  ): Observable<void> {
+    return this.httpClient.post<void>(
+      `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/AddPlayer`,
+      {
+        sessionId: sessionId,
+        player: {
+          nickName: nickName,
+          sessionId: sessionId,
+        },
+      }
+    );
+  }
+
   private catchResponseError(error: HttpErrorResponse) {
     console.error('Backend return error:', error);
     return throwError(() => error);

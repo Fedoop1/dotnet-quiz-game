@@ -5,15 +5,8 @@
 
 html,
 body {
-  margin: 0;
-  height: 100vh;
+  height: 100%;
+  color: rgb(201, 197, 192);
   font-family: Roboto, "Helvetica Neue", sans-serif;
   background: linear-gradient(to bottom right, #eb690c, 20%, #eb2a0c);
-}
-
-app-root {
-  display: block;
-  height: 100vh;
-  width: 100%;
-  margin: 0;
 }

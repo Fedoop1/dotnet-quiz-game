@@ -1,64 +1,93 @@
 <div class="create-session">
+  <div class="create-session-content">
     <div class="session-header">
-        <h1>Create session</h1>
+      <h1>Create session</h1>
     </div>
-        <div class="controls-container">
-            <div class="common-control">
-                <label for="roundDuration" class="input-label">
-                    Round duration:
-                </label>
-                <input name="roundDuration" class="common-input" [(ngModel)]="quizConfiguration.roundDuration">
-            </div>
-            <div class="common-control">
-                <label for="maxPlayers" class="input-label">
-                    Max players:
-                </label>
-                <input name="maxPlayers" class="common-input" [(ngModel)]="quizConfiguration.maxPlayers">
-            </div>
-            <div class="common-control">
-                <label for="streakMultiplier" class="input-label">
-                    Streak multiplier:
-                </label>
-                <input name="streakMultiplier" class="common-input" [(ngModel)]="quizConfiguration.streakMultiplier" type="text">
-            </div>
-            <div class="common-control">
-                <label for="timeMultiplier" class="input-label">
-                    Time Multiplier:
-                </label>
-                <input name="timeMultiplier" class="common-input" [(ngModel)]="quizConfiguration.timeMultiplier" type="text">
-            </div>
-            <div class="common-control">
-                <label for="answerIgnoreCase" class="input-label">
-                    Answer ignore case:
-                </label>
-                <input name="answerIgnoreCase" class="common-input" [(ngModel)]="quizConfiguration.answerIgnoreCase"
-                    type="checkbox">
-            </div>
-            <div class="common-control-file">
-                <label for="questionPack" class="input-label input-label-file">
-                    Upload Question Pack
-                </label>
-                <input name="questionPack" class="common-input" [(ngModel)]="quizConfiguration.questionPack" type="file"
-                    [accept]="'.json'">
-            </div>
+    <div class="controls-container">
+      <div class="common-control">
+        <label for="roundDuration" class="input-label"> Round duration: </label>
+        <input
+          name="roundDuration"
+          class="common-input"
+          [(ngModel)]="quizConfiguration.roundDuration"
+        />
+      </div>
+      <div class="common-control">
+        <label for="maxPlayers" class="input-label"> Max players: </label>
+        <input
+          name="maxPlayers"
+          class="common-input"
+          [(ngModel)]="quizConfiguration.maxPlayers"
+        />
+      </div>
+      <div class="common-control">
+        <label for="streakMultiplier" class="input-label">
+          Streak multiplier:
+        </label>
+        <input
+          name="streakMultiplier"
+          class="common-input"
+          [(ngModel)]="quizConfiguration.streakMultiplier"
+          type="text"
+        />
+      </div>
+      <div class="common-control">
+        <label for="timeMultiplier" class="input-label">
+          Time Multiplier:
+        </label>
+        <input
+          name="timeMultiplier"
+          class="common-input"
+          [(ngModel)]="quizConfiguration.timeMultiplier"
+          type="text"
+        />
+      </div>
+      <div class="common-control">
+        <label for="answerIgnoreCase" class="input-label">
+          Answer ignore case:
+        </label>
+        <input
+          name="answerIgnoreCase"
+          class="common-input"
+          [(ngModel)]="quizConfiguration.answerIgnoreCase"
+          type="checkbox"
+        />
+      </div>
+      <div class="common-control-file">
+        <label for="questionPack" class="input-label input-label-file">
+          Upload Question Pack
+        </label>
+        <input
+          name="questionPack"
+          class="common-input"
+          [(ngModel)]="quizConfiguration.questionPack"
+          type="file"
+          [accept]="'.json'"
+        />
+      </div>
     </div>
-    <div *ngIf="isShowValidationError" class="validation-error-container" >
-        <h3 class="validation-error-container-title">Invalid quiz configuration!</h3>
-        <p class="validation-error">
-            Round duration greater or equals 5 sec.<br>
-            Max players greater or equals 1<br>
-            Streak multiplier greater or equals 1<br>
-            Time multiplier greater or equals 1<br>
-            Question pack in JSON format
-        </p>
+    <div *ngIf="isShowValidationError" class="validation-error-container">
+      <h3 class="validation-error-container-title">
+        Invalid quiz configuration!
+      </h3>
+      <p class="validation-error">
+        Round duration greater or equals 5 sec.<br />
+        Max players greater or equals 1<br />
+        Streak multiplier greater or equals 1<br />
+        Time multiplier greater or equals 1<br />
+        Question pack in JSON format
+      </p>
     </div>
     <div *ngIf="errorMessage" class="validation-error-container">
-        <p  class="validation-error">{{ errorMessage }}</p>
+      <p class="validation-error">{{ errorMessage }}</p>
     </div>
     <div class="buttons-container">
-        <button (click)="onBackButtonClick()" class="common-button common-button__back">Back</button>
-        <button (click)="onCreateSessionClick()" class="common-button common-button__confirmation">Create session</button>
+      <button mat-icon-button (click)="onBackButtonClick()">
+        <mat-icon>home</mat-icon>
+      </button>
+      <button mat-icon-button (click)="onCreateSessionClick()">
+        <mat-icon>videogame_asset</mat-icon>
+      </button>
     </div>
+  </div>
 </div>
-
-

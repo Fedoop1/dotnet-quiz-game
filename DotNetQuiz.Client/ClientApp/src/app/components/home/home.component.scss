@@ -1,11 +1,11 @@
 .home-page {
-  margin: 220px auto;
-  .menu-container {
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    align-items: center;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
+  .menu-container {
+    margin-top: -200px;
     &-item {
       margin-top: 20px;
     }

@@ -1,22 +1,28 @@
 @use "/src/styles/variables";
 
 .join-session {
-  margin: 120px auto;
-  max-width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  min-width: 500px;
 
   .session-list-actions {
     margin-bottom: 10px;
+    min-width: 500px;
   }
 
   .session-list {
     border-radius: 6px;
+    min-width: 500px;
 
     &-item {
       width: 100%;
       padding: 10px;
       margin-bottom: 12px;
       border-radius: 8px;
-      background-color: rgba(253, 186, 186, 0.863);
+      background-color: rgb(95 15 15 / 86%);
 
       .session-info {
         display: flex;
