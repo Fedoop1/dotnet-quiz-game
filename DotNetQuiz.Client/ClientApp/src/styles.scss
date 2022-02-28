@@ -6,7 +6,14 @@
 html,
 body {
   margin: 0;
+  height: 100vh;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  height: 100%;
-  background-image: linear-gradient(to bottom right, #eb690c, 20%, #eb2a0c);
+  background: linear-gradient(to bottom right, #eb690c, 20%, #eb2a0c);
+}
+
+app-root {
+  display: block;
+  height: 100vh;
+  width: 100%;
+  margin: 0;
 }

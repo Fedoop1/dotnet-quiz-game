@@ -15,6 +15,7 @@ import { JoinSessionComponent } from './components/join-session/join-session.com
 import { SessionStatusPipe } from './components/join-session/pipes/session-status.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { CreateAccountComponent } from './components/create-account/create-account.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
     HomeComponent,
     CreateSessionComponent,
     JoinSessionComponent,
+    CreateAccountComponent,
     SessionStatusPipe,
   ],
   imports: [
