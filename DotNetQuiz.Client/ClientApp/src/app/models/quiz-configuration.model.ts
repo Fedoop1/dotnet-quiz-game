@@ -6,7 +6,7 @@ export interface QuizConfiguration {
   streakMultiplier: number;
   timeMultiplier: number;
   answerIgnoreCase: boolean;
-  questionPack: QuestionPack;
+  questionPack?: QuestionPack;
 }
 
 /*

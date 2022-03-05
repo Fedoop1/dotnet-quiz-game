@@ -6,7 +6,12 @@
 html,
 body {
   height: 100%;
-  color: rgb(201, 197, 192);
+  color: rgb(201, 197, 192) !important;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  background: linear-gradient(to bottom right, #eb690c, 20%, #eb2a0c);
+  background: linear-gradient(
+    to bottom right,
+    #eb690c,
+    20%,
+    #eb2a0c
+  ) !important;
 }

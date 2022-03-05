@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { tap } from 'rxjs/operators';
 import { QuizService } from 'src/app/services/quiz.service';
 
 @Component({
@@ -22,11 +23,23 @@ export class CreateAccountComponent {
   }
 
   public onJoinButtonClick() {
-    this.quizService.addPlayer(
-      this.nickName,
-      this.userId,
-      this.route.snapshot.queryParams?.sessionId
-    );
+    this.quizService
+      .addPlayer(
+        this.nickName,
+        this.userId,
+        this.route.snapshot.queryParams?.sessionId
+      )
+      .pipe(
+        tap(() =>
+          this.router.navigate(['session-lobby'], {
+            queryParams: {
+              sessionId: this.route.snapshot.queryParams?.sessionId,
+            },
+            state: { player: { id: this.userId, nickName: this.nickName } },
+          })
+        )
+      )
+      .subscribe();
   }
 
   public onBackButtonClick() {
