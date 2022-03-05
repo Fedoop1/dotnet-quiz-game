@@ -25,7 +25,7 @@ namespace DotNetQuiz.BLL.Models
 
             this.UploadPlayers(quizPlayers);
 
-            this.questionsLeft = this.quizConfiguration.QuestionPack.Questions.Count;
+            this.questionsLeft = this.quizConfiguration.QuestionPack.Questions.Count();
             this.CurrentRound = NextRound();
         }
 

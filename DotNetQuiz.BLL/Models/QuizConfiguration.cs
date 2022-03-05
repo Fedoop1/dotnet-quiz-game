@@ -7,6 +7,6 @@
         public double StreakMultiplier { get; set; }
         public double TimeMultiplier { get; set; }
         public bool AnswerIgnoreCase { get; set; }
-        public QuizQuestionPack QuestionPack { get; set; }
+        public QuizQuestionPack? QuestionPack { get; set; }
     }
 }
