@@ -40,7 +40,9 @@ export class JoinSessionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // this.loadActiveSessions();
+    if (history.state.isKicked) alert('You have been kicked from the lobby');
+
+    this.loadActiveSessions();
   }
 
   public onRefreshButtonClick() {

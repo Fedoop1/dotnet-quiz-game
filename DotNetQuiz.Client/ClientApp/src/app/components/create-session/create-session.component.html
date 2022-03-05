@@ -60,7 +60,7 @@
         <input
           name="questionPack"
           class="common-input"
-          [(ngModel)]="quizConfiguration.questionPack"
+          (change)="onQuestionPackChange($event)"
           type="file"
           [accept]="'.json'"
         />
@@ -82,12 +82,34 @@
       <p class="validation-error">{{ errorMessage }}</p>
     </div>
     <div class="buttons-container">
-      <button mat-icon-button (click)="onBackButtonClick()">
+      <button mat-icon-button (click)="Back()">
         <mat-icon>home</mat-icon>
       </button>
-      <button mat-icon-button (click)="onCreateSessionClick()">
+      <button mat-icon-button (click)="createSession()">
         <mat-icon>videogame_asset</mat-icon>
       </button>
+    </div>
+  </div>
+  <div *ngIf="quizConfiguration.questionPack" class="create-session-content">
+    <div class="create-session-questions-container">
+      <table class="table" style="color: rgb(201, 197, 192)">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Content</th>
+            <th>Answer</th>
+            <th>Reward</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let question of quizConfiguration.questionPack.questions">
+            <td>{{ question.questionId }}</td>
+            <td>{{ question.content.questionText || "blob image" }}</td>
+            <td>{{ question.answer.answerContent }}</td>
+            <td>{{ question.questionReward }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

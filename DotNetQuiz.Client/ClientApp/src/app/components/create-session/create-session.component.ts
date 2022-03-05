@@ -6,9 +6,10 @@ import {
   Router,
 } from '@angular/router';
 import { NEVER } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { DefaultQuestionPack } from 'src/app/models/constants/default-question-pack';
 import { QuizConfiguration } from 'src/app/models/quiz-configuration.model';
+import { QuizConfigurationService } from 'src/app/services/quiz-configuration.service';
 import { QuizService } from 'src/app/services/quiz.service';
 
 @Component({
@@ -31,13 +32,34 @@ export class CreateSessionComponent {
   constructor(
     private readonly quizService: QuizService,
     private readonly router: Router,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
+    private readonly quizConfigurationService: QuizConfigurationService
   ) {}
 
-  public onCreateSessionClick() {
+  public onQuestionPackChange(event: any) {
+    if (event.target.files.length === 0) {
+      this.quizConfiguration.questionPack = undefined;
+      return;
+    }
+
+    this.quizConfigurationService
+      .parseQuestionPack(event.target.files[0])
+      .pipe(
+        tap(
+          (questionPack) => (this.quizConfiguration.questionPack = questionPack)
+        )
+      )
+      .subscribe();
+  }
+
+  public createSession() {
     this.isShowValidationError = false;
 
-    if (!this.validateQuizConfiguration()) {
+    if (
+      !this.quizConfigurationService.validateQuizConfiguration(
+        this.quizConfiguration
+      )
+    ) {
       this.isShowValidationError = true;
       return;
     }
@@ -51,33 +73,20 @@ export class CreateSessionComponent {
         catchError((error: HttpErrorResponse) => {
           this.errorMessage = error.message;
           return NEVER;
-        })
-      );
+        }),
+        tap(() =>
+          this.router.navigate(['session-lobby'], {
+            queryParams: {
+              sessionId: this.route.snapshot.queryParams?.sessionId,
+            },
+            state: { isHost: true },
+          })
+        )
+      )
+      .subscribe();
   }
 
-  public onBackButtonClick() {
+  public Back() {
     this.router.navigate(['home']);
-  }
-
-  private validateQuizConfiguration(): boolean {
-    return (
-      this.quizConfiguration.roundDuration >= 5 &&
-      this.quizConfiguration.maxPlayers > 0 &&
-      this.quizConfiguration.streakMultiplier >= 1 &&
-      this.quizConfiguration.timeMultiplier >= 1 &&
-      this.validateQuestionPack()
-    );
-  }
-
-  private validateQuestionPack(): boolean {
-    return (
-      this.quizConfiguration.questionPack.questions &&
-      this.quizConfiguration.questionPack.questions.every((question) => {
-        question.questionId &&
-          question.questionReward >= 0 &&
-          question.content &&
-          question.answer;
-      })
-    );
   }
 }
