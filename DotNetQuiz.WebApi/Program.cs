@@ -1,3 +1,4 @@
+using System.Text.Json;
 using DotNetQuiz.BLL.Interfaces;
 using DotNetQuiz.BLL.Services;
 using DotNetQuiz.WebApi.Infrastructure.Interfaces;
@@ -16,7 +17,13 @@ builder.Services.AddCors(config =>
     });
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(config =>
+    {
+        config.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        config.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
+
 builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<IQuestionHandler, QuizQuestionsHandler>();

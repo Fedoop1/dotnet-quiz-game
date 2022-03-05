@@ -50,9 +50,25 @@ namespace DotNetQuiz.WebApi.Controllers
         }
 
         [HttpPost]
-        [Route("[action]/{sessionId:guid}")]
+        [HubFilter]
         [SessionFilter]
-        public IActionResult Configure(Guid sessionId, [Required(ErrorMessage = "Quiz Configuration is required!")] QuizConfiguration quizConfiguration)
+        [Route("{sessionId:guid}/[action]")]
+        public async Task<IActionResult> Close(Guid sessionId)
+        {
+            var quizHub = this.hubsConnectionManager.GetQuizSessionHub(sessionId);
+
+            await quizHub!.CloseHub();
+
+            this.handlersManager.RemoveSessionHandler(sessionId);
+            this.hubsConnectionManager.RemoveQuizSessionHub(sessionId);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("{sessionId:guid}/[action]")]
+        [SessionFilter]
+        public IActionResult Configure(Guid sessionId, QuizConfiguration quizConfiguration)
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
             sessionHandler!.UploadQuizConfiguration(quizConfiguration);
@@ -65,6 +81,14 @@ namespace DotNetQuiz.WebApi.Controllers
         public IActionResult GetQuizSessions()
         {
             return Ok(this.handlersManager.GetAllSessionHandlers().Select(h => h.ToQuizSessionModel()));
+        }
+
+        [HttpGet]
+        [Route("{sessionId:guid}/[action]")]
+        [SessionFilter]
+        public IActionResult GetSessionPlayers(Guid sessionId) 
+        {
+            return Ok(this.handlersManager.GetSessionHandler(sessionId)!.SessionPlayers.Select(sp => sp.ToQuizPlayerModel()));
         }
 
         [HttpPost]
@@ -80,17 +104,26 @@ namespace DotNetQuiz.WebApi.Controllers
 
         [HttpPost]
         [Route("{sessionId:guid}/[action]/{playerId:int}")]
+        [HubFilter]
         [SessionFilter]
-        public IActionResult RemovePlayer(Guid sessionId, [Range(1, int.MaxValue)] int playerId)
+        public async Task<IActionResult> RemovePlayer(Guid sessionId, [Range(1, int.MaxValue)] int playerId, [FromQuery] bool force = false)
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
+            var sessionHub = this.hubsConnectionManager.GetQuizSessionHub(sessionId);
+
             sessionHandler!.RemovePlayerFromSession(playerId);
+
+            if (force)
+            {
+                await sessionHub!.CloseConnectionWithUser(playerId);
+            }
 
             return Ok();
         }
 
         [HttpGet]
         [Route("{sessionId:guid}/[action]")]
+        [HubFilter]
         [SessionFilter]
         public IActionResult BuildRoundStatistic(Guid sessionId)
         {
@@ -99,7 +132,7 @@ namespace DotNetQuiz.WebApi.Controllers
 
             var currentRoundStatistic = sessionHandler!.BuildCurrentRoundStatistic();
 
-            quizHub?.SendRoundStatisticAsync(currentRoundStatistic);
+            quizHub!.SendRoundStatisticAsync(currentRoundStatistic);
 
             return Ok(currentRoundStatistic);
         }
@@ -117,6 +150,7 @@ namespace DotNetQuiz.WebApi.Controllers
 
         [HttpGet]
         [Route("{sessionId:guid}/[action]")]
+        [HubFilter]
         [SessionFilter]
         public IActionResult NextRound(Guid sessionId)
         {
