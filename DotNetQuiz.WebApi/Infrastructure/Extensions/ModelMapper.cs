@@ -18,4 +18,7 @@ public static class ModelMapper
         SessionId = quizSessionHandler.SessionId,
         SessionState = quizSessionHandler.SessionState
     };
+
+    public static QuizPlayerModel ToQuizPlayerModel(this QuizPlayer quizPlayer) => new ()
+        { Id = quizPlayer.Id, NickName = quizPlayer.NickName };
 }

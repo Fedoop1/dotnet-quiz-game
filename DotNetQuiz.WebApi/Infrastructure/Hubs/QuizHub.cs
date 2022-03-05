@@ -11,6 +11,11 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
         private readonly IQuizSessionHandler sessionHandler;
         public QuizHub(IQuizSessionHandler sessionHandler) => this.sessionHandler = sessionHandler;
 
+        public async Task CloseHub() => await Clients.Others.SendCoreAsync("connectionClosed", null);
+
+        public async Task CloseConnectionWithUser(int userId) =>
+            await Clients.Others.SendCoreAsync("userConnectionClosed", new[] {new { userId = userId }});
+
         public async Task SendQuestionAsync(QuizRoundModel quizRound) => await Clients.Users(GetQuizPlayersIds()).SendCoreAsync(
             "roundQuestion", new[] { quizRound });
 
@@ -20,5 +25,9 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
             .SendCoreAsync("roundStatistic", new[] { roundStatistic });
 
         private IEnumerable<string> GetQuizPlayersIds() => this.sessionHandler.SessionPlayers.Select(p => p.Id.ToString());
+
+        public override async Task OnConnectedAsync() => await this.Clients.Others.SendCoreAsync("playerAdded", null);
+
+        public override async Task OnDisconnectedAsync(Exception? exception) => await this.Clients.Others.SendCoreAsync("playerRemoved", null);
     }
 }

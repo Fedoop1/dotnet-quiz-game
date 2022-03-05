@@ -15,5 +15,7 @@ public class QuizHubsConnectionManager : IQuizHubsConnectionManager
         }
     }
 
+    public void RemoveQuizSessionHub(Guid sessionId) => this.quizSessionHubsStorage.Remove(sessionId);
+
     public IQuizHub? GetQuizSessionHub(Guid sessionId) => !this.quizSessionHubsStorage.TryGetValue(sessionId, out var quizSessionHub) ? null : quizSessionHub;
 }
