@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetQuiz.BLL", "DotNetQui
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetQuiz.Client", "DotNetQuiz.Client\DotNetQuiz.Client.csproj", "{8BEA07AC-66C3-4397-9CB0-73967C5B7492}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetQuiz.BLL.Tests", "DotNetQuiz.BLL.Tests\DotNetQuiz.BLL.Tests.csproj", "{2177A737-44FB-43F2-8402-68F2845C3D31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetQuiz.BLL.Tests", "DotNetQuiz.BLL.Tests\DotNetQuiz.BLL.Tests.csproj", "{2177A737-44FB-43F2-8402-68F2845C3D31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetQuiz.WebApi.Tests", "DotNetQuiz.WebApi.Tests\DotNetQuiz.WebApi.Tests.csproj", "{00CEF0F6-68A6-4388-AAF3-6B3599F1627A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetQuiz.WebApi.Tests", "DotNetQuiz.WebApi.Tests\DotNetQuiz.WebApi.Tests.csproj", "{00CEF0F6-68A6-4388-AAF3-6B3599F1627A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,8 @@
 using System.Text.Json;
 using DotNetQuiz.BLL.Interfaces;
 using DotNetQuiz.BLL.Services;
+using DotNetQuiz.WebApi.Infrastructure.Filters;
+using DotNetQuiz.WebApi.Infrastructure.Hubs;
 using DotNetQuiz.WebApi.Infrastructure.Interfaces;
 using DotNetQuiz.WebApi.Infrastructure.Services;
 
@@ -13,25 +15,31 @@ builder.Services.AddCors(config =>
     {
         config.AllowAnyHeader();
         config.AllowAnyMethod();
-        config.AllowAnyOrigin();
+        config.WithOrigins("http://localhost:4200", "http://localhost:6000");
+        config.AllowCredentials();
     });
 });
 
-builder.Services.AddControllers()
+builder.Services.AddControllers(config =>
+    {
+        config.Filters.Add<LogFilter>();
+    })
     .AddJsonOptions(config =>
     {
         config.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         config.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     });
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(config =>
+{
+    config.EnableDetailedErrors = true;
+    config.ClientTimeoutInterval = TimeSpan.FromMinutes(15);
+});
 
 builder.Services.AddSingleton<IQuestionHandler, QuizQuestionsHandler>();
 builder.Services.AddSingleton<IRoundStatisticAnalyzer, RoundStatisticAnalyzer>();
 builder.Services.AddSingleton<IQuizSessionHandlersFactory, QuizSessionHandlersFactory>();
 builder.Services.AddSingleton<IQuizHandlersManager, QuizHandlersManager>();
-builder.Services.AddSingleton<IQuizHubsFactory, QuizHubsFactory>();
-builder.Services.AddSingleton<IQuizHubsConnectionManager, QuizHubsConnectionManager>();
 
 var app = builder.Build();
 
@@ -40,8 +48,7 @@ if (app.Environment.IsDevelopment())
     app.UseCors("DevelopmentPolicy");
 }
 
-
-app.MapControllers();
+app.MapHub<QuizHub>("quiz/{sessionId:guid}/{nickName}/{isHost:bool}");
 
 app.MapControllerRoute("DefaultApiControllerRoute", "{controller=quiz}/{action=info}");
 
