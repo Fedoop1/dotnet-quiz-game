@@ -2,8 +2,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { NEVER, Observable, of, Subject, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { from, NEVER, Observable, of, Subject, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { QuizSession } from '../components/join-session/models/quiz-session.model';
 import AppConfiguration from '../models/constants/configuraion';
 import { QuizConfiguration } from '../models/quiz-configuration.model';
@@ -12,42 +12,23 @@ import { DestroyableComponent } from '../utils/destroyable-component/destroyable
 
 @Injectable()
 export class QuizService implements OnDestroy {
-  private quizHubConnection!: HubConnection;
+  private quizHubConnection?: HubConnection;
 
-  private _playerAdded$: Subject<void> = new Subject();
-  private _playerRemoved$: Subject<void> = new Subject();
-  private _connectionClose$: Subject<string> = new Subject();
-  private _userConnectionClosed$: Subject<number> = new Subject();
+  private _playerAdded$: Subject<QuizPlayer> = new Subject();
+  private _playerRemoved$: Subject<QuizPlayer> = new Subject();
+  private _sessionClosed$: Subject<void> = new Subject();
 
   public playerAdded$ = this._playerAdded$.asObservable();
   public playerRemoved$ = this._playerRemoved$.asObservable();
-  public userConnectionClosed$ = this._userConnectionClosed$.asObservable();
-  public connectionClose$ = this._connectionClose$.asObservable();
+  public sessionClosed$ = this._sessionClosed$.asObservable();
 
   constructor(
     private readonly httpClient: HttpClient,
     private readonly route: ActivatedRoute
-  ) {
-    this.buildConnection();
-    this.setupSubscribers();
-  }
+  ) {}
 
   ngOnDestroy(): void {
-    this.quizHubConnection.stop();
-  }
-
-  public removePlayer(
-    playerId: number,
-    sessionId: string,
-    force: boolean = false
-  ) {
-    return this.httpClient
-      .post(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/RemovePlayer/${playerId}`,
-        null,
-        { params: { force: force } }
-      )
-      .pipe(catchError(this.catchResponseError));
+    this.quizHubConnection?.stop();
   }
 
   public createQuizSession(): Observable<string> {
@@ -59,11 +40,11 @@ export class QuizService implements OnDestroy {
       .pipe(catchError(this.catchResponseError));
   }
 
-  public closeQuizSession(sessionId: number): Observable<void> {
+  public RemoveQuizSession(sessionId: string): Observable<string> {
     return this.httpClient
-      .post<void>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/Close/`,
-        null
+      .post<string>(
+        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/Remove`,
+        undefined
       )
       .pipe(catchError(this.catchResponseError));
   }
@@ -81,7 +62,15 @@ export class QuizService implements OnDestroy {
       .pipe(catchError(this.catchResponseError));
   }
 
-  public loadSessionPlayers(sessionId: string): Observable<QuizPlayer[]> {
+  public getPlayerInfo(sessionId: string, nickName: string) {
+    return this.httpClient
+      .get<QuizPlayer>(
+        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetPlayerInfo/${nickName}`
+      )
+      .pipe(catchError(this.catchResponseError));
+  }
+
+  public getSessionPlayers(sessionId: string): Observable<QuizPlayer[]> {
     return this.httpClient
       .get<QuizPlayer[]>(
         `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetSessionPlayers/`
@@ -89,7 +78,7 @@ export class QuizService implements OnDestroy {
       .pipe(catchError(this.catchResponseError));
   }
 
-  public loadQuizSessions(): Observable<QuizSession[]> {
+  public getQuizSessions(): Observable<QuizSession[]> {
     return this.httpClient
       .get<QuizSession[]>(
         `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/GetQuizSessions`
@@ -97,53 +86,45 @@ export class QuizService implements OnDestroy {
       .pipe(catchError(this.catchResponseError));
   }
 
-  public addPlayer(
-    nickName: string,
-    userId: number,
-    sessionId: string
-  ): Observable<void> {
-    return this.httpClient.post<void>(
-      `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/AddPlayer`,
-      {
-        nickName: nickName,
-        id: userId,
-      }
+  public connectToHub(userName: string, isHost: boolean = false) {
+    if (this.quizHubConnection) this.disconnectFromHub();
+
+    this.quizHubConnection = new HubConnectionBuilder()
+      .withUrl(
+        `${AppConfiguration.BackendServerAddress}/quiz/${
+          this.route.snapshot.queryParams?.sessionId
+        }/${isHost ? 'host' : userName}/${isHost}`
+      )
+      .build();
+
+    return from(this.quizHubConnection.start()).pipe(
+      catchError(this.catchResponseError),
+      tap(() => this.setupSubscribers())
     );
+  }
+
+  public disconnectFromHub() {
+    this.quizHubConnection?.stop();
+    this.quizHubConnection = undefined;
+  }
+
+  private setupSubscribers() {
+    this.quizHubConnection?.on('playerAdded', (quizPlayer: QuizPlayer) => {
+      this._playerAdded$.next(quizPlayer);
+    });
+
+    this.quizHubConnection?.on('playerRemoved', (quizPlayer: QuizPlayer) => {
+      this._playerRemoved$.next(quizPlayer);
+    });
+
+    this.quizHubConnection?.on('sessionClosed', () => {
+      this._sessionClosed$.next(void 0);
+      this.disconnectFromHub();
+    });
   }
 
   private catchResponseError(error: HttpErrorResponse) {
     console.error('Backend return error:', error);
     return throwError(() => error);
-  }
-
-  private buildConnection() {
-    this.quizHubConnection = new HubConnectionBuilder()
-      .withUrl(
-        `${AppConfiguration.BackendServerAddress}/quiz/${this.route.snapshot.queryParams?.sessionId}`
-      )
-      .build();
-  }
-
-  private setupSubscribers() {
-    this.quizHubConnection.on('playerAdded', () => {
-      this._playerAdded$.next();
-    });
-
-    this.quizHubConnection.on('playerRemoved', () => {
-      this._playerRemoved$.next();
-    });
-
-    this.quizHubConnection.on(
-      'userConnectionClosed',
-      (user: { userId: number }) => {
-        this._userConnectionClosed$.next(user.userId);
-      }
-    );
-
-    this.quizHubConnection.on('connectionClosed', (message: string[]) => {
-      this._connectionClose$.next(
-        message ? message[0] : 'Connection was closed'
-      );
-    });
   }
 }
