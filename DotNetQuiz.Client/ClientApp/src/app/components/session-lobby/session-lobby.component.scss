@@ -12,6 +12,11 @@
     width: 500px;
   }
 
+  &-container {
+    width: 100%;
+    max-width: 500px;
+  }
+
   &-action:not(:last-child) {
     padding-right: 25px;
   }

@@ -6,7 +6,7 @@ import {
   Router,
 } from '@angular/router';
 import { NEVER } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, finalize, tap } from 'rxjs/operators';
 import { DefaultQuestionPack } from 'src/app/models/constants/default-question-pack';
 import { QuizConfiguration } from 'src/app/models/quiz-configuration.model';
 import { QuizConfigurationService } from 'src/app/services/quiz-configuration.service';
@@ -87,6 +87,9 @@ export class CreateSessionComponent {
   }
 
   public Back() {
-    this.router.navigate(['home']);
+    this.quizService
+      .RemoveQuizSession(this.route.snapshot.queryParams?.sessionId)
+      .pipe(finalize(() => this.router.navigate(['home'])))
+      .subscribe();
   }
 }

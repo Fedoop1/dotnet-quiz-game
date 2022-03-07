@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { QuizService } from 'src/app/services/quiz.service';
 import { QuizSessionStatus } from './models/quiz-session-status.enum';
@@ -11,36 +11,19 @@ import { QuizSession } from './models/quiz-session.model';
   styleUrls: ['join-session.component.scss'],
 })
 export class JoinSessionComponent implements OnInit {
-  public quizSessions: QuizSession[] = [
-    {
-      countOfPlayers: 5,
-      maxPlayers: 6,
-      sessionId: 'Dummy text',
-      sessionState: QuizSessionStatus.NotStarted,
-    },
-    {
-      countOfPlayers: 6,
-      maxPlayers: 6,
-      sessionId: 'Dummy text',
-      sessionState: QuizSessionStatus.Running,
-    },
-    {
-      countOfPlayers: 1,
-      maxPlayers: 6,
-      sessionId: 'Dummy text',
-      sessionState: QuizSessionStatus.NotStarted,
-    },
-  ];
+  public quizSessions: QuizSession[] = [];
 
   public QuizSessionStatus = QuizSessionStatus;
 
   constructor(
     private readonly quizService: QuizService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    if (history.state.isKicked) alert('You have been kicked from the lobby');
+    if (this.route.snapshot.queryParams?.sessionClosed === 'true')
+      alert('Session closed. Host left the session');
 
     this.loadActiveSessions();
   }
@@ -68,7 +51,7 @@ export class JoinSessionComponent implements OnInit {
 
   private loadActiveSessions() {
     this.quizService
-      .loadQuizSessions()
+      .getQuizSessions()
       .pipe(
         tap((quizSessions: QuizSession[]) => (this.quizSessions = quizSessions))
       )

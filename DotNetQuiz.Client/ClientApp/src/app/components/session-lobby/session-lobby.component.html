@@ -16,18 +16,13 @@
           <td>
             {{ sessionPlayer.nickName }}
           </td>
-          <td *ngIf="isHost">
-            <button mar-icon-button (click)="removePlayer(sessionPlayer.id)">
-              <mat-icon>close</mat-icon>
-            </button>
-          </td>
         </tr>
       </tbody>
     </table>
   </div>
-  <div class="buttons-container">
+  <div class="buttons-container session-lobby-container">
     <div class="session-lobby-action">
-      <button class="common-button" (click)="leaveLobby(false)">Leave</button>
+      <button class="common-button" (click)="leaveLobby()">Leave</button>
     </div>
     <div class="session-lobby-action">
       <button *ngIf="isHost" class="common-button" (click)="startQuiz()">
