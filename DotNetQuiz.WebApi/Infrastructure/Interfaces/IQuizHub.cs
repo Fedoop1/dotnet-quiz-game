@@ -5,10 +5,12 @@ namespace DotNetQuiz.WebApi.Infrastructure.Interfaces;
 
 public interface IQuizHub
 {
-    Task CloseHub();
-    Task CloseConnectionWithUser(int userId);
-    Task SendQuestionAsync(QuizRoundModel quizRound);
-    void ReceiveQuestion(QuizPlayerAnswer answer);
-    Task SendRoundStatisticAsync(RoundStatistic roundStatistic);
+    Task SendQuestion(QuizRoundModel quizRound);
+    Task ReceiveQuestion(QuizPlayerAnswer answer);
+    Task SendRoundStatistic(RoundStatistic roundStatistic);
+    Task PlayerAdded(QuizPlayerModel quizPlayer);
+    Task PlayerRemoved(QuizPlayerModel quizPlayer);
+    Task SessionClosed();
+    
 }
 
