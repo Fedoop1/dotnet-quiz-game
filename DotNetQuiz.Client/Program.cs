@@ -8,10 +8,6 @@ var app = builder.Build();
 app.UseStaticFiles();
 app.UseSpaStaticFiles();
 
-app.MapFallback(async context =>
-{
-    context.Response.ContentType = "text/html";
-    await context.Response.SendFileAsync(Path.Combine("ClientApp", "dist", "index.html"));
-});
+app.MapFallbackToFile(Path.Combine("ClientApp", "dist", "index.html"));
 
 app.Run();
