@@ -12,7 +12,7 @@ namespace DotNetQuiz.BLL.Interfaces
         SessionState SessionState { get; }
         void UploadQuizConfiguration(QuizConfiguration configuration);
         void AddPlayerToSession(QuizPlayer quizPlayer);
-        void RemovePlayerFromSession(int playerId);
+        void RemovePlayerFromSession(string playerId);
         void StartGame();
         void SubmitAnswer(QuizPlayerAnswer answer);
         void NextRound();

@@ -9,7 +9,7 @@ namespace DotNetQuiz.BLL.Services
         private const string SessionIsNotStartedErrorMessage = "Session is not established!";
         private const string SessionAlreadyStartedErrorMessage = "Session is already started!";
 
-        private readonly Dictionary<int, QuizPlayer> sessionPlayers = new();
+        private readonly Dictionary<string, QuizPlayer> sessionPlayers = new();
         private readonly IQuestionHandler questionHandler;
         private readonly IRoundStatisticAnalyzer roundStatisticAnalyzer;
 
@@ -53,7 +53,7 @@ namespace DotNetQuiz.BLL.Services
             }
         }
 
-        public void RemovePlayerFromSession(int Id)
+        public void RemovePlayerFromSession(string Id)
         {
             if (!this.sessionPlayers.Remove(Id))
             {
@@ -108,11 +108,6 @@ namespace DotNetQuiz.BLL.Services
             if (string.IsNullOrEmpty(quizPlayer.NickName))
             {
                 throw new ArgumentException("Player name can't be null or empty");
-            }
-
-            if (quizPlayer.Id == default || quizPlayer.Id < 0)
-            {
-                throw new ArgumentException("Player name can't negative or equals zero");
             }
         }
     }
