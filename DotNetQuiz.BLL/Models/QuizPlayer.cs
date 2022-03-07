@@ -2,7 +2,7 @@
 {
     public class QuizPlayer
     {
-        public int Id { get; init; }
+        public string Id { get; init; }
         public string NickName { get; init; }
         public int Streak { get; set; }
         public int Score { get; set; }

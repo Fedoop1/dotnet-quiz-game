@@ -7,7 +7,7 @@ namespace DotNetQuiz.BLL.Models
         private readonly IQuestionHandler questionHandler;
         private readonly IRoundStatisticAnalyzer roundStatisticAnalyzer;
         private readonly QuizConfiguration quizConfiguration;
-        private readonly Dictionary<int, QuizPlayer> quizPlayers = new ();
+        private readonly Dictionary<string, QuizPlayer> quizPlayers = new ();
 
         private int questionsLeft;
         public QuizRound CurrentRound { get; private set; }
