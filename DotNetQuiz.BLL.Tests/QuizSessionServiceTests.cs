@@ -44,7 +44,7 @@ internal class QuizSessionHandlerTests
     [Test]
     public void AddPlayerToSession_PlayerWithSameIdAlreadyExists_ThrowsArgumentException()
     {
-        const int playerId = 1;
+        const string playerId = "id";
 
         this.sessionHandler.AddPlayerToSession(new QuizPlayer() {Id = playerId, NickName = "nickname" });
 
@@ -56,7 +56,7 @@ internal class QuizSessionHandlerTests
     [Test]
     public void AddPlayerToSession_SessionPlayersContainsNewPlayer()
     {
-        const int playerId = 1;
+        const string playerId = "id";
 
         this.sessionHandler.AddPlayerToSession(new QuizPlayer() {Id = playerId, NickName = "nickname" });
 
@@ -69,13 +69,13 @@ internal class QuizSessionHandlerTests
 
     [Test]
     public void RemovePlayerFromSession_PlayerWithIdDoesntExist_ThrowsArgumentException() =>
-        Assert.Throws<ArgumentException>(() => this.sessionHandler.RemovePlayerFromSession(1),
-            "Player with id [1] doesn't exist");
+        Assert.Throws<ArgumentException>(() => this.sessionHandler.RemovePlayerFromSession("id"),
+            "Player with id [id] doesn't exist");
 
     [Test]
     public void RemovePlayerFromSession_SessionPlayersDoesntContainRemovedPlayer()
     {
-        const int playerId = 1;
+        const string playerId = "id";
 
         this.sessionHandler.AddPlayerToSession(new QuizPlayer() {Id = playerId, NickName = "nickname" });
         this.sessionHandler.RemovePlayerFromSession(playerId);

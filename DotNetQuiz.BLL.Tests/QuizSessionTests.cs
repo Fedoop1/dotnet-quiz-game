@@ -55,7 +55,7 @@ public class QuizSessionTests
     public void Ctor_AddPlayerWithSameId_ThrowsArgumentException() =>
         Assert.Throws<ArgumentException>(
             () => new QuizSession(DefaultQuizConfiguration,
-                new QuizPlayer[] { new() { Id = 1 }, new() { Id = 1 } },
+                new QuizPlayer[] { new() { Id = "id" }, new() { Id = "id" } },
                 questionHandlerMock.Object, roundStatisticAnalyzerMock.Object));
 
     [Test]
@@ -76,9 +76,9 @@ public class QuizSessionTests
     public void SubmitAnswer_TestCases(int playerInitialScore, int playerInitialStreak, int expectedScore, int expectedStreak, string questionAnswer)
     {
         QuizPlayer player = new()
-            { Id = 1, NickName = "name", Score = playerInitialScore, Streak = playerInitialStreak };
+            { Id = "id", NickName = "name", Score = playerInitialScore, Streak = playerInitialStreak };
 
-        QuizPlayerAnswer wrongAnswer = new() { AnswerContent = questionAnswer, PlayerId = 1 };
+        QuizPlayerAnswer wrongAnswer = new() { AnswerContent = questionAnswer, PlayerId = "id" };
 
         QuizSession session = new(
             DefaultQuizConfiguration,
