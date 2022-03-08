@@ -63,7 +63,7 @@ namespace DotNetQuiz.BLL.Services
 
         public RoundStatistic BuildCurrentRoundStatistic()
         {
-            this.ValidateSessionState(SessionState.Running, SessionIsNotStartedErrorMessage);
+            this.ValidateSessionState(SessionState.NotStarted, SessionIsNotStartedErrorMessage);
 
             return this.quizSession.BuildCurrentRoundStatistic();
         }
@@ -72,7 +72,7 @@ namespace DotNetQuiz.BLL.Services
         {
             this.ValidateSessionState(SessionState.NotStarted, SessionAlreadyStartedErrorMessage);
 
-            this.SessionState = SessionState.Running;
+            this.SessionState = SessionState.Round;
 
             this.quizSession = new QuizSession(this.configuration, this.sessionPlayers.Values.AsEnumerable(),
                 this.questionHandler, this.roundStatisticAnalyzer);
@@ -83,17 +83,12 @@ namespace DotNetQuiz.BLL.Services
         public void SubmitAnswer(QuizPlayerAnswer answer)
         {
             ArgumentNullException.ThrowIfNull(answer, nameof(answer));
-            this.ValidateSessionState(SessionState.Running, SessionIsNotStartedErrorMessage);
+            this.ValidateSessionState(SessionState.Round, SessionIsNotStartedErrorMessage);
 
             this.quizSession.SubmitAnswer(answer);
         }
 
-        public void NextRound()
-        {
-            this.ValidateSessionState(SessionState.Running, SessionIsNotStartedErrorMessage);
-
-            this.CurrentSessionRound = this.quizSession.NextRound();
-        }
+        public void NextRound() => this.CurrentSessionRound = this.quizSession.NextRound();
 
         private void ValidateSessionState(SessionState expectedResult, string errorMessage)
         {

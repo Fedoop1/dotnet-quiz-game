@@ -9,7 +9,7 @@ public class QuizQuestionsHandler: IQuestionHandler
     {
         ArgumentNullException.ThrowIfNull(questions);
 
-        var uncompletedQuestions = questions.Where(q => !q.isCompleted).ToArray();
+        var uncompletedQuestions = questions.Where(q => !q.IsCompleted).ToArray();
         if (uncompletedQuestions.Length == 0) return null;
 
         Array.Sort(uncompletedQuestions);
