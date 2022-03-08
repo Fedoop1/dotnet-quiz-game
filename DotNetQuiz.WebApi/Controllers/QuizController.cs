@@ -63,7 +63,7 @@ namespace DotNetQuiz.WebApi.Controllers
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
 
-            if (sessionHandler!.SessionState == SessionState.Running)
+            if (sessionHandler!.SessionState != SessionState.NotStarted)
             {
                 return Conflict(new
                 {
@@ -101,31 +101,19 @@ namespace DotNetQuiz.WebApi.Controllers
         [SessionFilter]
         public IActionResult GetSessionPlayers(Guid sessionId) 
         {
-            return Ok(this.handlersManager.GetSessionHandler(sessionId)!.SessionPlayers.Select(sp => sp.ToQuizPlayerModel()));
+            return Ok(this.handlersManager.GetSessionHandler(sessionId)!.SessionPlayers);
         }
 
 
         [HttpGet]
         [Route("{sessionId:guid}/[action]")]
         [SessionFilter]
-        public IActionResult BuildRoundStatistic(Guid sessionId)
+        public IActionResult GetRoundStatistic(Guid sessionId)
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
             var currentRoundStatistic = sessionHandler!.BuildCurrentRoundStatistic();
-            // TODO: Add hub method call here
 
             return Ok(currentRoundStatistic);
-        }
-
-        [HttpGet]
-        [Route("{sessionId:guid}/[action]")]
-        [SessionFilter]
-        public IActionResult StartGame(Guid sessionId)
-        {
-            var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
-            sessionHandler!.StartGame();
-
-            return Ok();
         }
 
         [HttpGet]

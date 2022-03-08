@@ -1,4 +1,5 @@
 ﻿using DotNetQuiz.BLL.Models;
+using DotNetQuiz.BLL.Models.enums;
 using DotNetQuiz.WebApi.Infrastructure.Extensions;
 using DotNetQuiz.WebApi.Infrastructure.Interfaces;
 using DotNetQuiz.WebApi.Models;
@@ -15,21 +16,15 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
             (this.handlersManager, this.logger) = (handlersManager, logger);
 
         // TODO: Add implementation
-        public async Task SendQuestion(Guid sessionId, QuizRoundModel quizRound)
-        {
-            this.LogSendQuestion(sessionId);
-        }
-
-        // TODO: Add implementation
-        public void ReceiveQuestion(Guid sessionId, QuizPlayerAnswer answer)
+        public void ReceiveQuestion(string sessionId, QuizPlayerAnswer answer)
         {
             this.LogReceiveQuestion(sessionId, this.Context.ConnectionId);
         }
 
-        // TODO: Add implementation
-        public async Task SendRoundStatistic(Guid sessionId, RoundStatistic roundStatistic)
+        public async Task ChangeSessionState(string sessionId, SessionState sessionState)
         {
-            this.LogSendRoundStatistic(sessionId);
+            this.LogChangeSessionState(sessionId, Enum.GetName(typeof(SessionState), sessionState)!);
+            await this.Clients.OthersInGroup(sessionId).SessionStateChanged(sessionState);
         }
 
         public override async Task OnConnectedAsync()
@@ -92,7 +87,7 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
 
             if (routeData.isHost)
             {
-                await this.Clients.OthersInGroup(routeData.sessionId.ToString()).SessionClosed();
+                await this.Clients.OthersInGroup(routeData.sessionId.ToString()).SessionStateChanged(SessionState.Closed);
                 this.LogCloseSession(routeData.sessionId, connectionId);
 
                 foreach (var player in sessionHandler.SessionPlayers)
@@ -168,13 +163,16 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
         private partial void LogSendQuestion(Guid sessionId);
 
         [LoggerMessage(8, LogLevel.Information, "Receive question. Session id: {sessionId}. User id {userId}.")]
-        private partial void LogReceiveQuestion(Guid sessionId, string userId);
+        private partial void LogReceiveQuestion(string sessionId, string userId);
 
         [LoggerMessage(9, LogLevel.Warning, "Connection error. Message: {message}.")]
         private partial void LogConnectionError(string message);
 
         [LoggerMessage(10, LogLevel.Warning, "Disconnection error. Message: {message}.")]
         private partial void LogDisconnectionError(string message);
+
+        [LoggerMessage(11, LogLevel.Information, "Change session state. Session id: {sessionId}. Session state {sessionState}.")]
+        private partial void LogChangeSessionState(string sessionId, string sessionState);
 
         #endregion
     }
