@@ -1,0 +1,37 @@
+<div class="quiz-host">
+  <div class="quiz-host-tabs-container">
+    <mat-tab-group mat-align-tabs="start">
+      <mat-tab label="Leader Board"
+        ><leader-board [sessionId]="quizData.sessionId"></leader-board
+      ></mat-tab>
+      <mat-tab label="Round Statistic"
+        ><round-statistic [sessionId]="quizData.sessionId"></round-statistic
+      ></mat-tab>
+    </mat-tab-group>
+  </div>
+  <div *ngIf="currentRound" class="quiz-host-round-data">
+    <div class="question-content">
+      <p>
+        Question content:
+        {{ currentRound.questionContent.questionText || "Blob data" }}
+      </p>
+      <p>
+        Question type:
+        {{ currentRound.questionContent.questionType | questionType }}
+      </p>
+      <p>Start at: {{ startAt }}</p>
+      <p>End at: {{ endAt }}</p>
+      <p>Times left: {{ timesLeft }}</p>
+    </div>
+    <div class="question-progress-spinner">
+      <mat-progress-spinner [value]="roundProgress"></mat-progress-spinner>
+    </div>
+  </div>
+  <div class="quiz-host-actions-container">
+    <div class="quiz-host-action" (click)="nextRound()">Next Round</div>
+    <div class="quiz-host-action" (click)="showStatistic()">Show Statistic</div>
+    <div class="quiz-host-action" (click)="showLeaderBoard()">
+      Show Leader Board
+    </div>
+  </div>
+</div>

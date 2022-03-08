@@ -14,6 +14,8 @@ export class LeaderBoardComponent
   implements OnInit
 {
   public quizPlayers: QuizPlayer[] = [];
+  public sortByScore = (lhs: QuizPlayer, rhs: QuizPlayer) =>
+    lhs.score - rhs.score;
 
   @Input() sessionId!: string;
   constructor(private readonly quizService: QuizService) {

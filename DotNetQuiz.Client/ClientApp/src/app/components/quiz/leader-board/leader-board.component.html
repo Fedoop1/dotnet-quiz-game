@@ -9,7 +9,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let player of quizPlayers">
+        <tr *ngFor="let player of quizPlayers | sort: sortByScore">
           <td>{{ player.nickName }}</td>
           <td>{{ player.score }}</td>
           <td>{{ player.streak }}</td>

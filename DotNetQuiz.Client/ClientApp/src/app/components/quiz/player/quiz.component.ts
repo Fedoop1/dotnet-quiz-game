@@ -62,16 +62,18 @@ export class QuizComponent extends DestroyableComponent implements OnInit {
     super();
   }
 
-  public submitAnswer(answer: string) {
-    const questionAnswer: QuizPlayerAnswer = {
-      playerId: this.quizData.player.id,
-      answerContent: answer,
-      answerTime: this.quizRound.startAt - Date.now(),
-    };
+  public submitAnswer() {
+    return (answer: string) => {
+      const questionAnswer: QuizPlayerAnswer = {
+        playerId: this.quizData.player.id,
+        answerContent: answer,
+        answerTime: this.quizRound.startAt - Date.now(),
+      };
 
-    this.quizService
-      .submitAnswer(questionAnswer, this.quizData.sessionId)
-      .subscribe();
+      this.quizService
+        .submitAnswer(questionAnswer, this.quizData.sessionId)
+        .subscribe();
+    };
   }
 
   ngOnInit(): void {

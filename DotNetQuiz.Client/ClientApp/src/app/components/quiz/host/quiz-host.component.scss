@@ -1,0 +1,14 @@
+.quiz-host {
+  &-round-data {
+    display: flex;
+    justify-content: space-between;
+
+    .question-content {
+      width: 50%;
+    }
+
+    .question-progress-spinner {
+      width: 50%;
+    }
+  }
+}
