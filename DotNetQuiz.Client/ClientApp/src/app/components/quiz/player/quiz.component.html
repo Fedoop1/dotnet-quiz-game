@@ -1,0 +1,42 @@
+<ng-container *ngIf="sessionState === SessionState.Round && quizRound">
+  <div class="quiz">
+    <div class="quiz-canvas">
+      <canvas
+        #canvas
+        class="quiz-canvas-container"
+        width="800"
+        height="400"
+      ></canvas>
+    </div>
+    <div
+      class="buttons-container quiz-options-container--select"
+      *ngIf="quizRound.questionContent.questionType === QuestionType.Select"
+    >
+      <div
+        *ngFor="let questionOption of quizRound.questionContent.questionOptions"
+        class="quiz-option"
+        (click)="submitAnswer(questionOption)"
+      >
+        <p>{{ questionOption }}</p>
+      </div>
+    </div>
+    <div
+      class="buttons-container quiz-options-container--type"
+      *ngIf="quizRound.questionContent.questionType === QuestionType.Type"
+    >
+      <input #quizInput class="common-input quiz-input" />
+      <button
+        class="quiz-submit-button"
+        (click)="submitAnswer(quizInput.value)"
+      >
+        Submit
+      </button>
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngIf="sessionState === SessionState.LeaderBoard">
+  <leader-board [sessionId]="quizData.sessionId"></leader-board>
+</ng-container>
+<ng-container *ngIf="sessionState === SessionState.RoundStatistic"
+  ><round-statistic [sessionId]="quizData.sessionId"></round-statistic
+></ng-container>
