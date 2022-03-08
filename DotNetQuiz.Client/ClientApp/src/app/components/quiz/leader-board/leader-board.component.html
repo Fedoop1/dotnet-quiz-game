@@ -1,0 +1,20 @@
+<div class="leader-board">
+  <div class="leader-board-table-container">
+    <table class="table leader-board-table">
+      <thead>
+        <tr>
+          <th>NickName</th>
+          <th>Score</th>
+          <th>Streak</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let player of quizPlayers">
+          <td>{{ player.nickName }}</td>
+          <td>{{ player.score }}</td>
+          <td>{{ player.streak }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
