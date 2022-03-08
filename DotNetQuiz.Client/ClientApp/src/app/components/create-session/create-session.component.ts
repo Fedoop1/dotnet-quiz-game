@@ -7,7 +7,6 @@ import {
 } from '@angular/router';
 import { NEVER } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
-import { DefaultQuestionPack } from 'src/app/models/constants/default-question-pack';
 import { QuizConfiguration } from 'src/app/models/quiz-configuration.model';
 import { QuizConfigurationService } from 'src/app/services/quiz-configuration.service';
 import { QuizService } from 'src/app/services/quiz.service';

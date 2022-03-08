@@ -13,6 +13,7 @@ namespace DotNetQuiz.WebApi.Infrastructure.Filters
             if(!context.ActionArguments.TryGetValue(sessionIdActionParamName, out var sessionIdObj))
             {
                 context.Result = new BadRequestObjectResult(new { errorMessage = "sessionId is required!"});
+                return Task.CompletedTask;
             }
 
             var sessionId = (Guid)sessionIdObj!;
@@ -23,6 +24,7 @@ namespace DotNetQuiz.WebApi.Infrastructure.Filters
             {
                 context.Result = new BadRequestObjectResult(new
                     { errorMessage = $"Quiz session with id [{sessionId}] doesn't exist" });
+                return Task.CompletedTask;
             }
 
             return next();
