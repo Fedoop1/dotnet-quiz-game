@@ -18,6 +18,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
 import { SessionLobbyComponent } from './components/session-lobby/session-lobby.component';
 import { QuizConfigurationService } from './services/quiz-configuration.service';
+import { QuizHostComponent } from './components/quiz/host/quiz-host.component';
+import { QuizComponent } from './components/quiz/player/quiz.component';
+import { RoundStatisticComponent } from './components/quiz/round-statistic/round-statistic.component';
+import { LeaderBoardComponent } from './components/quiz/leader-board/leader-board.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +32,10 @@ import { QuizConfigurationService } from './services/quiz-configuration.service'
     CreateAccountComponent,
     SessionStatusPipe,
     SessionLobbyComponent,
+    QuizHostComponent,
+    QuizComponent,
+    RoundStatisticComponent,
+    LeaderBoardComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -42,15 +50,7 @@ import { QuizConfigurationService } from './services/quiz-configuration.service'
     MatButtonModule,
   ],
   exports: [MatIconModule, MatButtonModule],
-  providers: [
-    QuizConfigurationService,
-    {
-      provide: QuizService,
-      useFactory: (httpClient: HttpClient, route: ActivatedRoute) =>
-        new QuizService(httpClient, route),
-      deps: [HttpClient, ActivatedRoute],
-    },
-  ],
+  providers: [QuizConfigurationService, QuizService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

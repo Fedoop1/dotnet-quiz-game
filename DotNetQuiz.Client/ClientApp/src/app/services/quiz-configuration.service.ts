@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { QuestionPack } from '../models/questio-pack.model';
+import { QuestionPack } from '../models/quiz-question-pack.model';
 import { QuizConfiguration } from '../models/quiz-configuration.model';
 
 @Injectable()

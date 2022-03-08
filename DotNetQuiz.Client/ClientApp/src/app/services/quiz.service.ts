@@ -6,8 +6,13 @@ import { from, NEVER, Observable, of, Subject, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { QuizSession } from '../components/join-session/models/quiz-session.model';
 import AppConfiguration from '../models/constants/configuraion';
+import { SessionState } from '../models/enums/round-state.enum.model';
 import { QuizConfiguration } from '../models/quiz-configuration.model';
+import { QuizPlayerAnswer } from '../models/quiz-player-answer.model';
 import { QuizPlayer } from '../models/quiz-player.model';
+import { Question } from '../models/quiz-question.model';
+import { QuizRound } from '../models/quiz-round.model';
+import { RoundStatistic } from '../models/round-statistic.model';
 import { DestroyableComponent } from '../utils/destroyable-component/destroyable.component';
 
 @Injectable()
@@ -16,11 +21,11 @@ export class QuizService implements OnDestroy {
 
   private _playerAdded$: Subject<QuizPlayer> = new Subject();
   private _playerRemoved$: Subject<QuizPlayer> = new Subject();
-  private _sessionClosed$: Subject<void> = new Subject();
+  private _sessionState$: Subject<SessionState> = new Subject();
 
   public playerAdded$ = this._playerAdded$.asObservable();
   public playerRemoved$ = this._playerRemoved$.asObservable();
-  public sessionClosed$ = this._sessionClosed$.asObservable();
+  public sessionState$ = this._sessionState$.asObservable();
 
   constructor(
     private readonly httpClient: HttpClient,
@@ -49,6 +54,22 @@ export class QuizService implements OnDestroy {
       .pipe(catchError(this.catchResponseError));
   }
 
+  public changeSessionState(sessionId: string, sessionState: SessionState) {
+    return of(
+      this.quizHubConnection?.invoke(
+        'changeSessionState',
+        sessionId,
+        sessionState
+      )
+    );
+  }
+
+  public submitAnswer(answer: QuizPlayerAnswer, sessionId: string) {
+    return of(
+      this.quizHubConnection?.send('receiveQuestion', [sessionId, answer])
+    );
+  }
+
   public configureQuizSession(
     sessionId: string,
     quizConfiguration: QuizConfiguration
@@ -65,7 +86,23 @@ export class QuizService implements OnDestroy {
   public getPlayerInfo(sessionId: string, nickName: string) {
     return this.httpClient
       .get<QuizPlayer>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetPlayerInfo/${nickName}`
+        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetPlayerInfo/${nickName}/`
+      )
+      .pipe(catchError(this.catchResponseError));
+  }
+
+  public getRoundStatistic(sessionId: string): Observable<RoundStatistic> {
+    return this.httpClient
+      .get<RoundStatistic>(
+        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetRoundStatistic/`
+      )
+      .pipe(catchError(this.catchResponseError));
+  }
+
+  public getQuizRound(sessionId: string): Observable<QuizRound> {
+    return this.httpClient
+      .get<QuizRound>(
+        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetQuizRound/`
       )
       .pipe(catchError(this.catchResponseError));
   }
@@ -81,7 +118,7 @@ export class QuizService implements OnDestroy {
   public getQuizSessions(): Observable<QuizSession[]> {
     return this.httpClient
       .get<QuizSession[]>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/GetQuizSessions`
+        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/GetQuizSessions/`
       )
       .pipe(catchError(this.catchResponseError));
   }
@@ -93,7 +130,7 @@ export class QuizService implements OnDestroy {
       .withUrl(
         `${AppConfiguration.BackendServerAddress}/quiz/${
           this.route.snapshot.queryParams?.sessionId
-        }/${isHost ? 'host' : userName}/${isHost}`
+        }/${isHost ? 'host' : userName}/${isHost}/`
       )
       .build();
 
@@ -117,10 +154,12 @@ export class QuizService implements OnDestroy {
       this._playerRemoved$.next(quizPlayer);
     });
 
-    this.quizHubConnection?.on('sessionClosed', () => {
-      this._sessionClosed$.next(void 0);
-      this.disconnectFromHub();
-    });
+    this.quizHubConnection?.on(
+      'sessionStateChanged',
+      (sessionState: SessionState) => {
+        this._sessionState$.next(sessionState);
+      }
+    );
   }
 
   private catchResponseError(error: HttpErrorResponse) {
