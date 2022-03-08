@@ -1,12 +1,16 @@
-﻿namespace DotNetQuiz.BLL.Models
+﻿using DotNetQuiz.BLL.Models.enums;
+
+namespace DotNetQuiz.BLL.Models
 {
     public class QuizQuestion : IComparable<QuizQuestion>, IComparable
     {
-        public int QuestionId { get; set; }
-        public int QuestionReward { get; set; }
-        public QuestionContent? Content { get; set; }
-        public QuestionAnswer? Answer { get; set; }
-        public bool isCompleted { get; set; }
+        public int QuestionId { get; init; }
+        public QuestionType QuestionType { get; init; }
+        public int QuestionReward { get; init; }
+        public QuestionContent? Content { get; init; }
+        public QuestionAnswer? Answer { get; init; }
+        public string[]? Options { get; init; }
+        public bool IsCompleted { get; set; }
 
         public int CompareTo(QuizQuestion? other)
         {

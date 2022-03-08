@@ -1,9 +1,12 @@
-﻿namespace DotNetQuiz.BLL.Models
+﻿using DotNetQuiz.BLL.Models.enums;
+
+namespace DotNetQuiz.BLL.Models
 {
     public class QuestionContent
     {
-        public string? QuestionText { get; set; }
-
-        public byte[]? QuestionBlob { get; set; }
+        public QuestionType QuestionType { get; init; } 
+        public string[]? QuestionOptions { get; init; }
+        public string? QuestionText { get; init; }
+        public byte[]? QuestionBlob { get; init; }
     }
 }

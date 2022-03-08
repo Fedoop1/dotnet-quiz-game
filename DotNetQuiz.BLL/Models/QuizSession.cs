@@ -44,7 +44,7 @@ namespace DotNetQuiz.BLL.Models
         {
             if (this.CurrentRound is not null)
             {
-                this.CurrentRound.CurrentQuestion.isCompleted = true;
+                this.CurrentRound.CurrentQuestion.IsCompleted = true;
             }
 
             if (--questionsLeft < 0)

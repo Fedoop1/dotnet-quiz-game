@@ -3,6 +3,9 @@
     public enum SessionState
     {
         NotStarted = 1,
-        Running
+        Round = 3,
+        LeaderBoard = 4,
+        RoundStatistic = 5,
+        Closed = 6,
     }
 }
