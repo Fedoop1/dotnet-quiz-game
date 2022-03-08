@@ -1,4 +1,4 @@
-import { QuestionPack } from './questio-pack.model';
+import { QuestionPack } from './quiz-question-pack.model';
 
 export interface QuizConfiguration {
   roundDuration: number;

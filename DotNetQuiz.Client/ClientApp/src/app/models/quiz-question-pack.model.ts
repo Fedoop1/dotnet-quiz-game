@@ -1,4 +1,4 @@
-import { Question } from './question.model';
+import { Question } from './quiz-question.model';
 
 export interface QuestionPack {
   questionPackId: number;

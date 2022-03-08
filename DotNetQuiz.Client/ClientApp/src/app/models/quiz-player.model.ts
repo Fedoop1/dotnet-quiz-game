@@ -1,4 +1,6 @@
 export interface QuizPlayer {
-  id: number;
+  id: string;
   nickName: string;
+  streak: number;
+  score: number;
 }
