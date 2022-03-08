@@ -1,8 +1,8 @@
-import { QuizSessionStatus } from './quiz-session-status.enum';
+import { SessionState } from 'src/app/models/enums/round-state.enum.model';
 
 export interface QuizSession {
   countOfPlayers: number;
   maxPlayers: number;
   sessionId: string;
-  sessionState: QuizSessionStatus;
+  sessionState: SessionState;
 }
