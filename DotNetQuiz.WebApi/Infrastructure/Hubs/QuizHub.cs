@@ -16,9 +16,9 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
             (this.handlersManager, this.logger) = (handlersManager, logger);
 
         // TODO: Add implementation
-        public void ReceiveQuestion(string sessionId, QuizPlayerAnswer answer)
+        public void ProcessAnswer(string sessionId, QuizPlayerAnswer answer)
         {
-            this.LogReceiveQuestion(sessionId, this.Context.ConnectionId);
+            this.LogProcessAnswer(sessionId, this.Context.ConnectionId);
         }
 
         public async Task ChangeSessionState(string sessionId, SessionState sessionState)
@@ -162,8 +162,8 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
         [LoggerMessage(7, LogLevel.Information, "Send question. Session id: {sessionId}.")]
         private partial void LogSendQuestion(Guid sessionId);
 
-        [LoggerMessage(8, LogLevel.Information, "Receive question. Session id: {sessionId}. User id {userId}.")]
-        private partial void LogReceiveQuestion(string sessionId, string userId);
+        [LoggerMessage(8, LogLevel.Information, "Process Answer. Session id: {sessionId}. User id {userId}.")]
+        private partial void LogProcessAnswer(string sessionId, string userId);
 
         [LoggerMessage(9, LogLevel.Warning, "Connection error. Message: {message}.")]
         private partial void LogConnectionError(string message);

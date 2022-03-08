@@ -59,6 +59,17 @@ namespace DotNetQuiz.WebApi.Controllers
         [HttpPost]
         [SessionFilter]
         [Route("{sessionId:guid}/[action]")]
+        public IActionResult NextRound(Guid sessionId)
+        {
+            var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
+            sessionHandler!.NextRound();
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [SessionFilter]
+        [Route("{sessionId:guid}/[action]")]
         public IActionResult Remove(Guid sessionId)
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
@@ -114,20 +125,6 @@ namespace DotNetQuiz.WebApi.Controllers
             var currentRoundStatistic = sessionHandler!.BuildCurrentRoundStatistic();
 
             return Ok(currentRoundStatistic);
-        }
-
-        [HttpGet]
-        [Route("{sessionId:guid}/[action]")]
-        
-        [SessionFilter]
-        public IActionResult NextRound(Guid sessionId)
-        {
-            var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
-            // TODO: Add hub method call here
-
-            sessionHandler!.NextRound();
-
-            return Ok();
         }
     }
 }

@@ -74,9 +74,7 @@ export class QuizService implements OnDestroy {
   }
 
   public submitAnswer(answer: QuizPlayerAnswer, sessionId: string) {
-    return of(
-      this.quizHubConnection?.send('receiveQuestion', [sessionId, answer])
-    );
+    return of(this.quizHubConnection?.send('processAnswer', sessionId, answer));
   }
 
   public configureQuizSession(
