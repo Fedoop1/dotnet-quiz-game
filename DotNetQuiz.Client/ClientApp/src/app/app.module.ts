@@ -12,7 +12,6 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JoinSessionComponent } from './components/join-session/join-session.component';
-import { SessionStatusPipe } from './components/join-session/pipes/session-status.pipe';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CreateAccountComponent } from './components/create-account/create-account.component';
@@ -22,6 +21,12 @@ import { QuizHostComponent } from './components/quiz/host/quiz-host.component';
 import { QuizComponent } from './components/quiz/player/quiz.component';
 import { RoundStatisticComponent } from './components/quiz/round-statistic/round-statistic.component';
 import { LeaderBoardComponent } from './components/quiz/leader-board/leader-board.component';
+import { SessionStatePipe } from './components/join-session/pipes/session-state.pipe';
+import { SortPipe } from './components/quiz/leader-board/pipes/sort.pipe';
+import { MatTabsModule } from '@angular/material/tabs';
+import { QuestionComponent } from './components/quiz/question/question.component';
+import { QuestionTypePipe } from './components/quiz/host/pipes/question-type.pipe';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -30,12 +35,15 @@ import { LeaderBoardComponent } from './components/quiz/leader-board/leader-boar
     CreateSessionComponent,
     JoinSessionComponent,
     CreateAccountComponent,
-    SessionStatusPipe,
     SessionLobbyComponent,
     QuizHostComponent,
     QuizComponent,
     RoundStatisticComponent,
     LeaderBoardComponent,
+    QuestionComponent,
+    SessionStatePipe,
+    SortPipe,
+    QuestionTypePipe,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -48,6 +56,8 @@ import { LeaderBoardComponent } from './components/quiz/leader-board/leader-boar
     BrowserAnimationsModule,
     MatIconModule,
     MatButtonModule,
+    MatTabsModule,
+    MatProgressSpinnerModule,
   ],
   exports: [MatIconModule, MatButtonModule],
   providers: [QuizConfigurationService, QuizService],

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
+import { SessionState } from 'src/app/models/enums/round-state.enum.model';
 import { QuizService } from 'src/app/services/quiz.service';
-import { QuizSessionStatus } from './models/quiz-session-status.enum';
 import { QuizSession } from './models/quiz-session.model';
 
 @Component({
@@ -13,7 +13,7 @@ import { QuizSession } from './models/quiz-session.model';
 export class JoinSessionComponent implements OnInit {
   public quizSessions: QuizSession[] = [];
 
-  public QuizSessionStatus = QuizSessionStatus;
+  public SessionState = SessionState;
 
   constructor(
     private readonly quizService: QuizService,
@@ -44,7 +44,7 @@ export class JoinSessionComponent implements OnInit {
 
   public isSessionDisabled(session: QuizSession) {
     return (
-      session.sessionState === QuizSessionStatus.Running ||
+      session.sessionState !== SessionState.NotStarted ||
       session.countOfPlayers === session.maxPlayers
     );
   }

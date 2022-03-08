@@ -54,6 +54,15 @@ export class QuizService implements OnDestroy {
       .pipe(catchError(this.catchResponseError));
   }
 
+  public NextRound(sessionId: string) {
+    return this.httpClient
+      .post<string>(
+        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/NextRound`,
+        undefined
+      )
+      .pipe(catchError(this.catchResponseError));
+  }
+
   public changeSessionState(sessionId: string, sessionState: SessionState) {
     return of(
       this.quizHubConnection?.invoke(
