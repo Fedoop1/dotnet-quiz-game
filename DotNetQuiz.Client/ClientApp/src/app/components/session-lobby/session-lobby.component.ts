@@ -1,3 +1,4 @@
+import { TOUCH_BUFFER_MS } from '@angular/cdk/a11y/input-modality/input-modality-detector';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { from, Observable, of, Subscription } from 'rxjs';
@@ -9,6 +10,8 @@ import {
   takeUntil,
   tap,
 } from 'rxjs/operators';
+import { SessionState } from 'src/app/models/enums/round-state.enum.model';
+import { QuizData } from 'src/app/models/quiz-data.model';
 import { QuizPlayer } from 'src/app/models/quiz-player.model';
 import { QuizService } from 'src/app/services/quiz.service';
 import { DestroyableComponent } from 'src/app/utils/destroyable-component/destroyable.component';
@@ -56,7 +59,22 @@ export class SessionLobbyComponent
       : this.router.navigate(['join-session']);
   }
 
-  public startQuiz() {}
+  public startQuiz() {
+    this.quizService
+      .changeSessionState(
+        this.route.snapshot.queryParams?.sessionId,
+        SessionState.Round
+      )
+      .pipe(
+        takeUntil(this.onDestroy$),
+        tap(() => {
+          this.router.navigate(['quiz-host'], {
+            state: { quiz: this.getQuizData() },
+          });
+        })
+      )
+      .subscribe();
+  }
 
   private loadData(): Observable<QuizPlayer[]> {
     if (this.isHost) return of([]);
@@ -92,9 +110,10 @@ export class SessionLobbyComponent
           .subscribe()
     );
 
-    this.quizService.sessionClosed$
+    this.quizService.sessionState$
       .pipe(
         takeUntil(this.onDestroy$),
+        filter((sessionState) => sessionState === SessionState.Closed),
         tap(() =>
           this.router.navigate(['join-session'], {
             queryParams: { sessionClosed: true },
@@ -102,5 +121,25 @@ export class SessionLobbyComponent
         )
       )
       .subscribe();
+
+    this.quizService.sessionState$
+      .pipe(
+        takeUntil(this.onDestroy$),
+        filter((sessionState) => sessionState === SessionState.Round),
+        tap(() => {
+          this.router.navigate(['quiz'], {
+            state: { quiz: this.getQuizData() },
+          });
+        })
+      )
+      .subscribe();
+  }
+
+  private getQuizData(): QuizData {
+    return {
+      player: this.currentPlayer,
+      isHost: this.isHost,
+      sessionId: this.route.snapshot.queryParams?.sessionId,
+    };
   }
 }

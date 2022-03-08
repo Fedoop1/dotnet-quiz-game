@@ -10,10 +10,10 @@
       </thead>
       <tbody>
         <tr *ngFor="let sessionPlayer of sessionPlayers">
-          <td>
+          <td [class.current-user]="sessionPlayer.id === currentPlayer?.id">
             {{ sessionPlayer.id }}
           </td>
-          <td>
+          <td [class.current-user]="sessionPlayer.id === currentPlayer?.id">
             {{ sessionPlayer.nickName }}
           </td>
         </tr>
