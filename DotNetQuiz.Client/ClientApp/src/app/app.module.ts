@@ -49,7 +49,7 @@ import { DateFormatterPipe } from './components/quiz/host/pipes/date-formatter.p
     DateFormatterPipe,
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    BrowserModule,
     CommonModule,
     HttpClientModule,
     RouterModule,

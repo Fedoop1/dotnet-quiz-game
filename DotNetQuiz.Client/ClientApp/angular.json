@@ -23,9 +23,7 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              "src/assets"
-            ],
+            "assets": ["src/assets"],
             "inlineStyleLanguage": "scss",
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
@@ -74,8 +72,7 @@
               "browserTarget": "DotNetQuiz.Client:build:production"
             },
             "development": {
-              "browserTarget": "DotNetQuiz.Client:build:development",
-              "proxyConfig": "proxy.conf.js"
+              "browserTarget": "DotNetQuiz.Client:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -93,9 +90,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/assets"
-            ],
+            "assets": ["src/assets"],
             "inlineStyleLanguage": "scss",
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
