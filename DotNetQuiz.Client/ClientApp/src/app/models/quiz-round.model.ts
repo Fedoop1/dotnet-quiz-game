@@ -1,7 +1,7 @@
 import { QuestionContent } from './quiz-question-content.model';
 
 export interface QuizRound {
-  startAt: number;
-  endAt: number;
+  startAt?: Date;
+  endAt?: Date;
   questionContent: QuestionContent;
 }

@@ -25,7 +25,7 @@ namespace DotNetQuiz.BLL.Models
 
             this.UploadPlayers(quizPlayers);
 
-            this.questionsLeft = this.quizConfiguration.QuestionPack.Questions.Count();
+            this.questionsLeft = this.quizConfiguration.QuestionPack?.Questions?.Count() ?? 0;
             this.CurrentRound = NextRound();
         }
 
@@ -35,6 +35,8 @@ namespace DotNetQuiz.BLL.Models
         public void SubmitAnswer(QuizPlayerAnswer answer)
         {
             ArgumentNullException.ThrowIfNull(answer, nameof(answer));
+
+            if(DateTime.Now > this.CurrentRound.EndAt)
 
             this.ProcessPlayerAnswer(answer);
             (this.CurrentRound.Answers as IList<QuizPlayerAnswer>)!.Add(answer);
@@ -52,18 +54,30 @@ namespace DotNetQuiz.BLL.Models
                 throw new ArgumentOutOfRangeException("There are no more questions.");
             }
 
-            var nextQuestion = this.questionHandler.NextQuestion(this.quizConfiguration.QuestionPack.Questions);
-            var currentTime = new TimeOnly(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            var nextQuestion = this.questionHandler.NextQuestion(this.quizConfiguration.QuestionPack?.Questions);
+            
 
             this.CurrentRound = new QuizRound()
             {
-                CurrentQuestion = nextQuestion, 
-                StartAt = currentTime,
-                EndAt = currentTime.Add(TimeSpan.FromSeconds(this.quizConfiguration.RoundDuration)),
+                StartAt = null,
+                EndAt = null,
+                CurrentQuestion = nextQuestion,           
                 Answers = new List<QuizPlayerAnswer>()
             };
 
             return CurrentRound;
+        }
+
+        public void StartRound()
+        {
+            if(this.CurrentRound.StartAt != default || this.CurrentRound.EndAt != default)
+            {
+                throw new ArgumentException("Round is already started");
+            }
+
+            this.CurrentRound.StartAt = DateTime.Now;
+            this.CurrentRound.EndAt = this.CurrentRound.StartAt.Value
+                .Add(TimeSpan.FromSeconds(this.quizConfiguration.RoundDuration));
         }
 
         private void ProcessPlayerAnswer(QuizPlayerAnswer playerAnswer)
