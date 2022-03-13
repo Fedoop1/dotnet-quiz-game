@@ -15,7 +15,7 @@ builder.Services.AddCors(config =>
     {
         config.AllowAnyHeader();
         config.AllowAnyMethod();
-        config.WithOrigins("http://localhost:4200", "http://localhost:6000");
+        config.WithOrigins("http://localhost:4200", "http://localhost:6000", "https://localhost:6001");
         config.AllowCredentials();
     });
 });
