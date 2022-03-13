@@ -21,12 +21,13 @@ import { QuizHostComponent } from './components/quiz/host/quiz-host.component';
 import { QuizComponent } from './components/quiz/player/quiz.component';
 import { RoundStatisticComponent } from './components/quiz/round-statistic/round-statistic.component';
 import { LeaderBoardComponent } from './components/quiz/leader-board/leader-board.component';
-import { SessionStatePipe } from './components/join-session/pipes/session-state.pipe';
 import { SortPipe } from './components/quiz/leader-board/pipes/sort.pipe';
 import { MatTabsModule } from '@angular/material/tabs';
 import { QuestionComponent } from './components/quiz/question/question.component';
 import { QuestionTypePipe } from './components/quiz/host/pipes/question-type.pipe';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { RoundTimerComponent } from './components/quiz/round-timer/round-timer.component';
+import { DateFormatterPipe } from './components/quiz/host/pipes/date-formatter.pipe';
 
 @NgModule({
   declarations: [
@@ -41,9 +42,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     RoundStatisticComponent,
     LeaderBoardComponent,
     QuestionComponent,
-    SessionStatePipe,
+    RoundTimerComponent,
+    // Pipes
     SortPipe,
     QuestionTypePipe,
+    DateFormatterPipe,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
