@@ -2,13 +2,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSpaStaticFiles(config => config.RootPath = "ClientApp/dist");
 
-builder.Services.AddMvc(opt => opt.EnableEndpointRouting = false);
-
 var app = builder.Build();
 
 app.UseStaticFiles();
 
-app.UseRouting();
+if(!app.Environment.IsDevelopment())
+{
+    app.UseSpaStaticFiles();
+}
 
 app.UseSpa((config) =>
 {
@@ -19,3 +20,7 @@ app.UseSpa((config) =>
         config.UseProxyToSpaDevelopmentServer("http://localhost:4200");
     }
 });
+
+app.MapFallbackToFile("index.html");
+
+app.Run();

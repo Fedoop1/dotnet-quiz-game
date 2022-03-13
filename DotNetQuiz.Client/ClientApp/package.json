@@ -5,8 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "build:ssr": "ng run DotNetQuiz.Client:server:dev",
     "watch": "ng build --watch --configuration development",
+    "build:wwwroot": "ng build --output-path ../wwwroot",
+    "watch:wwwroot": "ng build --output-path ../wwwroot --watch",
     "test": "ng test"
   },
   "private": true,
