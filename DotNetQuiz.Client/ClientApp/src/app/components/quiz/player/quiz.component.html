@@ -1,5 +1,10 @@
 <ng-container *ngIf="sessionState === SessionState.Round && quizRound">
   <question [quizRound]="quizRound" [submitAnswer]="submitAnswer()"></question>
+  <round-timer
+    #timer
+    [startAt]="quizRound.startAt!"
+    [endAt]="quizRound.endAt!"
+  ></round-timer>
 </ng-container>
 <ng-container *ngIf="sessionState === SessionState.LeaderBoard">
   <leader-board [sessionId]="quizData.sessionId"></leader-board>

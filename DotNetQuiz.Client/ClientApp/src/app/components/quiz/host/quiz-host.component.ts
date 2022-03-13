@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { SessionState } from 'src/app/models/enums/round-state.enum.model';
@@ -7,6 +8,8 @@ import { QuizPlayer } from 'src/app/models/quiz-player.model';
 import { QuizRound } from 'src/app/models/quiz-round.model';
 import { QuizService } from 'src/app/services/quiz.service';
 import { DestroyableComponent } from 'src/app/utils/destroyable-component/destroyable.component';
+import { RoundTimerComponent } from '../round-timer/round-timer.component';
+import { DateFormat } from './models/date-format.enum';
 
 @Component({
   selector: 'quiz-host',
@@ -18,68 +21,46 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
   public quizData!: QuizData;
   public currentRound!: QuizRound;
 
-  public get startAt(): string {
-    return new Date(this.currentRound.startAt).toLocaleTimeString();
-  }
+  public DateFormat = DateFormat;
+  public isFirstRound = true;
 
-  public get endAt(): string {
-    return new Date(this.currentRound.endAt).toLocaleTimeString();
-  }
-
-  public get timesLeft(): string {
-    let leftInMilliseconds =
-      this.currentRound.endAt - this.currentRound.startAt;
-
-    leftInMilliseconds = leftInMilliseconds < 0 ? 0 : leftInMilliseconds;
-
-    const secondsLeft = leftInMilliseconds % 60;
-    const minutesLeft = leftInMilliseconds / 60;
-
-    return `${minutesLeft}:${secondsLeft}`;
-  }
-
-  public get roundProgress(): number {
-    return (
-      ((this.currentRound.endAt - this.currentRound.startAt / 1000) * 100) / 60
-    );
-  }
+  @ViewChild('timer') timer!: RoundTimerComponent;
 
   constructor(
     private readonly quizService: QuizService,
     private readonly router: Router
   ) {
     super();
-
-    this.loadData();
   }
 
   ngOnInit(): void {
     this.quizData = history.state.quiz;
 
     if (!this.quizData) this.router.navigate(['']);
+
+    this.loadData();
   }
 
   private loadData() {
-    this.quizService
-      .getQuizRound(this.quizData.sessionId)
-      .pipe(
-        takeUntil(this.onDestroy$),
-        tap((round) => (this.currentRound = round))
-      )
-      .subscribe();
+    this.loadRound().subscribe();
   }
 
   public nextRound() {
     this.quizService
-      .NextRound(this.quizData.sessionId)
+      .nextRound(this.quizData.sessionId)
       .pipe(
         takeUntil(this.onDestroy$),
-        switchMap(() =>
-          this.quizService.changeSessionState(
-            this.quizData.sessionId,
-            SessionState.Round
-          )
-        )
+        switchMap(() => this.loadRound())
+      )
+      .subscribe();
+  }
+
+  public startRound() {
+    this.quizService
+      .startRound(this.quizData.sessionId)
+      .pipe(
+        takeUntil(this.onDestroy$),
+        tap(() => this.timer.startTimer())
       )
       .subscribe();
   }
@@ -87,14 +68,27 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
   public showStatistic() {
     this.quizService
       .changeSessionState(this.quizData.sessionId, SessionState.RoundStatistic)
-      .pipe(takeUntil(this.onDestroy$))
+      .pipe(
+        takeUntil(this.onDestroy$),
+        tap(() => this.timer.stopTimer())
+      )
       .subscribe();
   }
 
   public showLeaderBoard() {
     this.quizService
       .changeSessionState(this.quizData.sessionId, SessionState.LeaderBoard)
-      .pipe(takeUntil(this.onDestroy$))
+      .pipe(
+        takeUntil(this.onDestroy$),
+        tap(() => this.timer.stopTimer())
+      )
       .subscribe();
+  }
+
+  private loadRound() {
+    return this.quizService.getQuizRound(this.quizData.sessionId).pipe(
+      takeUntil(this.onDestroy$),
+      tap((round) => (this.currentRound = round))
+    );
   }
 }

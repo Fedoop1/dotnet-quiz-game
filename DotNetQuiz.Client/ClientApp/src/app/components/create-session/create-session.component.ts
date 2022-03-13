@@ -87,7 +87,7 @@ export class CreateSessionComponent {
 
   public Back() {
     this.quizService
-      .RemoveQuizSession(this.route.snapshot.queryParams?.sessionId)
+      .removeQuizSession(this.route.snapshot.queryParams?.sessionId)
       .pipe(finalize(() => this.router.navigate(['home'])))
       .subscribe();
   }

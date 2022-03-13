@@ -10,7 +10,7 @@
     </mat-tab-group>
   </div>
   <div *ngIf="currentRound" class="quiz-host-round-data">
-    <div class="question-content">
+    <div class="quiz-host-round-question-content">
       <p>
         Question content:
         {{ currentRound.questionContent.questionText || "Blob data" }}
@@ -19,15 +19,36 @@
         Question type:
         {{ currentRound.questionContent.questionType | questionType }}
       </p>
-      <p>Start at: {{ startAt }}</p>
-      <p>End at: {{ endAt }}</p>
-      <p>Times left: {{ timesLeft }}</p>
+      <p>
+        Start at:
+        {{
+          currentRound.startAt
+            ? (currentRound.startAt | dateFormatter: DateFormat.LocaleString)
+            : "Not started"
+        }}
+      </p>
+      <p>
+        End at:
+        {{
+          currentRound.endAt
+            ? (currentRound.endAt | dateFormatter: DateFormat.LocaleString)
+            : "Not Started"
+        }}
+      </p>
     </div>
-    <div class="question-progress-spinner">
-      <mat-progress-spinner [value]="roundProgress"></mat-progress-spinner>
+    <div
+      class="quiz-host-round-timer"
+      *ngIf="currentRound.startAt && currentRound.endAt"
+    >
+      <round-timer
+        #timer
+        [startAt]="currentRound.startAt"
+        [endAt]="currentRound.endAt"
+      ></round-timer>
     </div>
   </div>
   <div class="quiz-host-actions-container">
+    <div class="quiz-host-action" (click)="startRound()">Start Round</div>
     <div class="quiz-host-action" (click)="nextRound()">Next Round</div>
     <div class="quiz-host-action" (click)="showStatistic()">Show Statistic</div>
     <div class="quiz-host-action" (click)="showLeaderBoard()">

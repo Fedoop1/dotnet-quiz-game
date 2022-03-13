@@ -43,10 +43,7 @@ export class JoinSessionComponent implements OnInit {
   }
 
   public isSessionDisabled(session: QuizSession) {
-    return (
-      session.sessionState !== SessionState.NotStarted ||
-      session.countOfPlayers === session.maxPlayers
-    );
+    return !session.isOpen || session.countOfPlayers === session.maxPlayers;
   }
 
   private loadActiveSessions() {

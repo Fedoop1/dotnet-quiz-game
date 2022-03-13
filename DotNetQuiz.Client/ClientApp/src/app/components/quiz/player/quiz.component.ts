@@ -17,6 +17,7 @@ import { RoundStatistic } from 'src/app/models/round-statistic.model';
 import { QuizService } from 'src/app/services/quiz.service';
 import { DestroyableComponent } from 'src/app/utils/destroyable-component/destroyable.component';
 import { byteArrayToBase64 } from 'src/app/utils/image.util';
+import { RoundTimerComponent } from '../round-timer/round-timer.component';
 
 @Component({
   selector: 'quiz',
@@ -54,6 +55,8 @@ export class QuizComponent extends DestroyableComponent implements OnInit {
     this.canvas.nativeElement.height = height;
   }
 
+  @ViewChild('timer') timer!: RoundTimerComponent;
+
   constructor(
     private readonly quizService: QuizService,
     private readonly router: Router,
@@ -67,7 +70,7 @@ export class QuizComponent extends DestroyableComponent implements OnInit {
       const questionAnswer: QuizPlayerAnswer = {
         playerId: this.quizData.player.id,
         answerContent: answer,
-        answerTime: this.quizRound.startAt - Date.now(),
+        answerTime: this.quizRound.startAt!.getTime() - Date.now(),
       };
 
       this.quizService
@@ -140,12 +143,12 @@ export class QuizComponent extends DestroyableComponent implements OnInit {
             takeUntil(this.onDestroy$),
             tap((quizRound) => {
               this.quizRound = quizRound;
+              this.timer.startTimer();
               this.displayQuestion();
             })
           )
           .subscribe();
         return;
-      case SessionState.RoundStatistic:
     }
   }
 }

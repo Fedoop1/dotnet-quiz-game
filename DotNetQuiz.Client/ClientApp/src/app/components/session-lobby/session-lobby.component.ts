@@ -61,10 +61,7 @@ export class SessionLobbyComponent
 
   public startQuiz() {
     this.quizService
-      .changeSessionState(
-        this.route.snapshot.queryParams?.sessionId,
-        SessionState.Round
-      )
+      .startGame(this.route.snapshot.queryParams?.sessionId)
       .pipe(
         takeUntil(this.onDestroy$),
         tap(() => {

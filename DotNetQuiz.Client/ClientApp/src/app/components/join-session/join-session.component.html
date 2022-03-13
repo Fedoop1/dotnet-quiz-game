@@ -26,12 +26,12 @@
           <p
             class="session-info__status"
             [ngClass]="[
-              session.sessionState !== SessionState.NotStarted
-                ? 'session-info__status--running'
-                : 'session-info__status--not-started'
+              session.isOpen
+                ? 'session-info__status--not-started'
+                : 'session-info__status--running'
             ]"
           >
-            Session status: {{ session.sessionState | sessionState }}
+            {{ session.isOpen ? "Open" : "Closed" }}
           </p>
         </div>
         <div class="session-info">

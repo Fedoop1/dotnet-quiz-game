@@ -1,5 +1,6 @@
 .quiz-host {
   &-round-data {
+    margin-top: 20px;
     display: flex;
     justify-content: space-between;
 
@@ -10,5 +11,8 @@
     .question-progress-spinner {
       width: 50%;
     }
+  }
+
+  &-tabs-container {
   }
 }

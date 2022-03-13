@@ -4,5 +4,5 @@ export interface QuizSession {
   countOfPlayers: number;
   maxPlayers: number;
   sessionId: string;
-  sessionState: SessionState;
+  isOpen: boolean;
 }
