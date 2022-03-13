@@ -36,7 +36,7 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
   ngOnInit(): void {
     this.quizData = history.state.quiz;
 
-    if (!this.quizData) this.router.navigate(['']);
+    // if (!this.quizData) this.router.navigate(['']);
 
     this.loadData();
   }

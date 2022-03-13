@@ -1,58 +1,72 @@
-<div class="quiz-host">
-  <div class="quiz-host-tabs-container">
-    <mat-tab-group mat-align-tabs="start">
-      <mat-tab label="Leader Board"
-        ><leader-board [sessionId]="quizData.sessionId"></leader-board
-      ></mat-tab>
-      <mat-tab label="Round Statistic"
-        ><round-statistic [sessionId]="quizData.sessionId"></round-statistic
-      ></mat-tab>
-    </mat-tab-group>
-  </div>
-  <div *ngIf="currentRound" class="quiz-host-round-data">
-    <div class="quiz-host-round-question-content">
-      <p>
-        Question content:
-        {{ currentRound.questionContent.questionText || "Blob data" }}
-      </p>
-      <p>
-        Question type:
-        {{ currentRound.questionContent.questionType | questionType }}
-      </p>
-      <p>
-        Start at:
-        {{
-          currentRound.startAt
-            ? (currentRound.startAt | dateFormatter: DateFormat.LocaleString)
-            : "Not started"
-        }}
-      </p>
-      <p>
-        End at:
-        {{
-          currentRound.endAt
-            ? (currentRound.endAt | dateFormatter: DateFormat.LocaleString)
-            : "Not Started"
-        }}
-      </p>
+<div class="component-container quiz-host">
+  <div class="component-container-content quiz-host-content">
+    <div class="quiz-host-tabs-container">
+      <mat-tab-group mat-align-tabs="start">
+        <mat-tab label="Leader Board"
+          ><leader-board [sessionId]="quizData.sessionId"></leader-board
+        ></mat-tab>
+        <mat-tab label="Round Statistic"
+          ><round-statistic [sessionId]="quizData.sessionId"></round-statistic
+        ></mat-tab>
+      </mat-tab-group>
     </div>
-    <div
-      class="quiz-host-round-timer"
-      *ngIf="currentRound.startAt && currentRound.endAt"
-    >
-      <round-timer
-        #timer
-        [startAt]="currentRound.startAt"
-        [endAt]="currentRound.endAt"
-      ></round-timer>
+    <div *ngIf="currentRound" class="quiz-host-round-data">
+      <div class="quiz-host-round-question-content">
+        <p>
+          Question content:
+          {{ currentRound.questionContent.questionText || "Blob data" }}
+        </p>
+        <p>
+          Question type:
+          {{ currentRound.questionContent.questionType | questionType }}
+        </p>
+        <p>
+          Start at:
+          {{
+            currentRound.startAt
+              ? (currentRound.startAt | dateFormatter: DateFormat.LocaleString)
+              : "Not started"
+          }}
+        </p>
+        <p>
+          End at:
+          {{
+            currentRound.endAt
+              ? (currentRound.endAt | dateFormatter: DateFormat.LocaleString)
+              : "Not Started"
+          }}
+        </p>
+      </div>
+      <div
+        class="quiz-host-round-timer"
+        *ngIf="currentRound.startAt && currentRound.endAt"
+      >
+        <round-timer
+          #timer
+          [startAt]="currentRound.startAt"
+          [endAt]="currentRound.endAt"
+        ></round-timer>
+      </div>
     </div>
-  </div>
-  <div class="quiz-host-actions-container">
-    <div class="quiz-host-action" (click)="startRound()">Start Round</div>
-    <div class="quiz-host-action" (click)="nextRound()">Next Round</div>
-    <div class="quiz-host-action" (click)="showStatistic()">Show Statistic</div>
-    <div class="quiz-host-action" (click)="showLeaderBoard()">
-      Show Leader Board
+    <div class="quiz-host-actions-container">
+      <div class="quiz-host-action">
+        <button class="common-button" (click)="startRound()">
+          Start Round
+        </button>
+      </div>
+      <div class="quiz-host-action">
+        <button class="common-button" (click)="nextRound()">Next round</button>
+      </div>
+      <div class="quiz-host-action">
+        <button class="common-button" (click)="showStatistic()">
+          Show Statistic
+        </button>
+      </div>
+      <div class="quiz-host-action">
+        <button class="common-button" (click)="showLeaderBoard()">
+          Show Leader Board
+        </button>
+      </div>
     </div>
   </div>
 </div>

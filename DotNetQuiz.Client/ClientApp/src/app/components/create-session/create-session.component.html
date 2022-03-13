@@ -1,5 +1,5 @@
-<div class="create-session">
-  <div class="create-session-content">
+<div class="component-container create-session">
+  <div class="component-container-content create-session-content">
     <div class="session-header">
       <h1>Create session</h1>
     </div>
@@ -90,8 +90,11 @@
       </button>
     </div>
   </div>
-  <div *ngIf="quizConfiguration.questionPack" class="create-session-content">
-    <div class="create-session-questions-container">
+  <div
+    *ngIf="quizConfiguration.questionPack"
+    class="component-container-content create-session-content--large"
+  >
+    <div class="create-session-questions-container table-responsive">
       <table class="table" style="color: rgb(201, 197, 192)">
         <thead>
           <tr>

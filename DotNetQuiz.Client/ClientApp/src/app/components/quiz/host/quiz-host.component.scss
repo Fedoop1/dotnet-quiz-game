@@ -1,4 +1,10 @@
 .quiz-host {
+  max-width: 1000px;
+
+  &-content {
+    padding: 20px;
+  }
+
   &-round-data {
     margin-top: 20px;
     display: flex;
@@ -13,6 +19,13 @@
     }
   }
 
-  &-tabs-container {
+  &-actions-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &-action {
+    margin: 10px;
   }
 }

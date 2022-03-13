@@ -1,14 +1,15 @@
 .create-session {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100%;
+  flex-direction: row;
 
   &-content {
     max-width: 500px;
-    background-color: rgb(95 15 15 / 86%);
-    border-radius: 8px;
     padding: 20px;
+    margin: 20px;
+
+    &--large {
+      max-width: 1000px;
+    }
   }
 
   &-content:not(:first-child) {
