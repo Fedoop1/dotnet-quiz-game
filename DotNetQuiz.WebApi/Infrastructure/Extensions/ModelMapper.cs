@@ -10,13 +10,12 @@ public static class ModelMapper
         EndAt = quizRound.EndAt, StartAt = quizRound.StartAt, QuestionContent = quizRound.CurrentQuestion.Content
     };
 
-
     public static QuizSessionModel ToQuizSessionModel(this IQuizSessionHandler quizSessionHandler) => new()
     {
         CountOfPlayers = quizSessionHandler.SessionPlayers.Count,
         MaxPlayers = quizSessionHandler.QuizConfiguration.MaxPlayers,
         SessionId = quizSessionHandler.SessionId,
-        SessionState = quizSessionHandler.SessionState
+        isOpen = quizSessionHandler.IsOpen,
     };
 
     public static QuizPlayerModel ToQuizPlayerModel(this QuizPlayer quizPlayer) => new ()

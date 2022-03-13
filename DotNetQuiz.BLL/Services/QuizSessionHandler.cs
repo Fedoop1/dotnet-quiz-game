@@ -1,14 +1,10 @@
 ﻿using DotNetQuiz.BLL.Interfaces;
 using DotNetQuiz.BLL.Models;
-using DotNetQuiz.BLL.Models.enums;
 
 namespace DotNetQuiz.BLL.Services
 {
     public class QuizSessionHandler: IQuizSessionHandler
     {
-        private const string SessionIsNotStartedErrorMessage = "Session is not established!";
-        private const string SessionAlreadyStartedErrorMessage = "Session is already started!";
-
         private readonly Dictionary<string, QuizPlayer> sessionPlayers = new();
         private readonly IQuestionHandler questionHandler;
         private readonly IRoundStatisticAnalyzer roundStatisticAnalyzer;
@@ -29,14 +25,14 @@ namespace DotNetQuiz.BLL.Services
 
         public Guid SessionId { get; }
         public QuizConfiguration QuizConfiguration => this.configuration;
-        public QuizRound CurrentSessionRound { get; private set; }
+        public QuizRound CurrentRound { get; private set; }
         public IReadOnlyCollection<QuizPlayer> SessionPlayers => this.sessionPlayers.Values;
-        public SessionState SessionState { get; private set; } = SessionState.NotStarted;
+
+        public bool IsOpen => this.quizSession is null;
 
         public void UploadQuizConfiguration(QuizConfiguration quizConfiguration)
         {
             ArgumentNullException.ThrowIfNull(quizConfiguration, nameof(quizConfiguration));
-            this.ValidateSessionState(SessionState.NotStarted, SessionAlreadyStartedErrorMessage);
 
             this.configuration = quizConfiguration;
         }
@@ -45,7 +41,6 @@ namespace DotNetQuiz.BLL.Services
         {
             ArgumentNullException.ThrowIfNull(quizPlayer, nameof(quizPlayer));
             this.ValidateQuizPlayer(quizPlayer);
-            this.ValidateSessionState(SessionState.NotStarted, SessionAlreadyStartedErrorMessage);
 
             if (!this.sessionPlayers.TryAdd(quizPlayer.Id, quizPlayer))
             {
@@ -63,40 +58,27 @@ namespace DotNetQuiz.BLL.Services
 
         public RoundStatistic BuildCurrentRoundStatistic()
         {
-            this.ValidateSessionState(SessionState.NotStarted, SessionIsNotStartedErrorMessage);
-
             return this.quizSession.BuildCurrentRoundStatistic();
         }
 
         public void StartGame()
         {
-            this.ValidateSessionState(SessionState.NotStarted, SessionAlreadyStartedErrorMessage);
-
-            this.SessionState = SessionState.Round;
-
             this.quizSession = new QuizSession(this.configuration, this.sessionPlayers.Values.AsEnumerable(),
                 this.questionHandler, this.roundStatisticAnalyzer);
 
-            this.CurrentSessionRound = this.quizSession.CurrentRound;
+            this.CurrentRound = this.quizSession.CurrentRound;
         }
 
         public void SubmitAnswer(QuizPlayerAnswer answer)
         {
             ArgumentNullException.ThrowIfNull(answer, nameof(answer));
-            this.ValidateSessionState(SessionState.Round, SessionIsNotStartedErrorMessage);
 
             this.quizSession.SubmitAnswer(answer);
         }
 
-        public void NextRound() => this.CurrentSessionRound = this.quizSession.NextRound();
+        public void NextRound() => this.CurrentRound = this.quizSession.NextRound();
 
-        private void ValidateSessionState(SessionState expectedResult, string errorMessage)
-        {
-            if (this.SessionState != expectedResult)
-            {
-                throw new ArgumentException(errorMessage);
-            }
-        }
+        public void StartRound() => this.quizSession.StartRound();
 
         private void ValidateQuizPlayer(QuizPlayer quizPlayer)
         {

@@ -18,10 +18,10 @@ namespace DotNetQuiz.WebApi.Controllers
         private readonly ILogger logger;
         private readonly IQuizSessionHandlersFactory sessionHandlerFactory;
         private readonly IQuizHandlersManager handlersManager;
-        private readonly IHubContext<QuizHub> quizHubContext;
+        private readonly IHubContext<QuizHub, IQuizHub> quizHubContext;
 
         public QuizController(ILogger<QuizController> logger, IQuizSessionHandlersFactory sessionHandlerFactory,
-            IQuizHandlersManager handlersManager, IHubContext<QuizHub> quizHubContext) =>
+            IQuizHandlersManager handlersManager, IHubContext<QuizHub, IQuizHub> quizHubContext) =>
             (this.logger, this.sessionHandlerFactory, this.handlersManager, this.quizHubContext) =
             (logger, sessionHandlerFactory, handlersManager, quizHubContext);
 
@@ -45,6 +45,7 @@ namespace DotNetQuiz.WebApi.Controllers
             return quizPlayer != default ? Ok(quizPlayer) : NotFound();
         }
 
+
         [HttpPost]
         [Route("[action]")]
         public IActionResult Create()
@@ -54,6 +55,21 @@ namespace DotNetQuiz.WebApi.Controllers
             this.handlersManager.AddSessionHandler(quizSessionHandler.SessionId, quizSessionHandler);
 
             return Ok(quizSessionHandler.SessionId);
+        }
+
+        [HttpPost]
+        [Route("{sessionId:guid}/[action]")]
+        [SessionFilter]
+        public async Task<IActionResult> StartGame(Guid sessionId)
+        {
+            var quizSessionHandler = this.handlersManager.GetSessionHandler(sessionId);
+
+            quizSessionHandler!.StartGame();
+
+            await this.quizHubContext.Clients.Group(sessionId.ToString())
+                .SessionStateChanged(SessionState.Round);
+
+            return Ok();
         }
 
         [HttpPost]
@@ -70,18 +86,32 @@ namespace DotNetQuiz.WebApi.Controllers
         [HttpPost]
         [SessionFilter]
         [Route("{sessionId:guid}/[action]")]
+        public async Task<IActionResult> StartRound(Guid sessionId)
+        {
+            var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
+            sessionHandler!.StartRound();
+
+            await this.quizHubContext.Clients.Group(sessionId.ToString())
+                .SessionStateChanged(SessionState.Round);
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("{sessionId:guid}/[action]/")]
+        [SessionFilter]
+        public IActionResult GetQuizRound(Guid sessionId)
+        {
+            var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
+            return Ok(sessionHandler!.CurrentRound.ToQuizRoundModel());
+        }
+
+        [HttpPost]
+        [SessionFilter]
+        [Route("{sessionId:guid}/[action]")]
         public IActionResult Remove(Guid sessionId)
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
-
-            if (sessionHandler!.SessionState != SessionState.NotStarted)
-            {
-                return Conflict(new
-                {
-                    message = "Session is already running. " +
-                              "Session is automatically closes when host leaves."
-                });
-            }
 
             this.handlersManager.RemoveSessionHandler(sessionId);
 

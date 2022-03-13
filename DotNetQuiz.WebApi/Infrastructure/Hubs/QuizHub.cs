@@ -23,8 +23,8 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
 
         public async Task ChangeSessionState(string sessionId, SessionState sessionState)
         {
-            this.LogChangeSessionState(sessionId, Enum.GetName(typeof(SessionState), sessionState)!);
             await this.Clients.OthersInGroup(sessionId).SessionStateChanged(sessionState);
+            this.LogChangeSessionState(sessionId, Enum.GetName(typeof(SessionState), sessionState)!);
         }
 
         public override async Task OnConnectedAsync()

@@ -20,11 +20,16 @@ public class RoundStatisticAnalyzer : IRoundStatisticAnalyzer
         };
     }
 
-    private double CalculateAverageAnswerTime(IEnumerable<QuizPlayerAnswer> answers) =>
-        answers.Select(a => a.AnswerTime).Average();
+    private double CalculateAverageAnswerTime(IEnumerable<QuizPlayerAnswer> answers)
+    {
+        if(!answers.Any()) return 0;
+
+        return answers.Select(a => a.AnswerTime).Average();
+    }
 
     private IEnumerable<KeyValuePair<string, int>> CalculateAnswerStatistic(IEnumerable<QuizPlayerAnswer> answers, bool ignoreCase)
-    {
+    {   if(!answers.Any()) return new Dictionary<string, int>();
+
         var answersStatistic = answers.GroupBy(a =>
                 ignoreCase ? a.AnswerContent.ToLowerInvariant() : a.AnswerContent)
             .ToDictionary(k => k.Key, v => v.Count());
