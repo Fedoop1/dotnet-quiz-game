@@ -1,0 +1,12 @@
+.question-table {
+  &-content {
+    max-width: 1000px;
+    padding: 20px;
+    margin: 20px;
+  }
+}
+
+.selected-question {
+  color: rgb(37, 36, 36);
+  background-color: rgb(200, 255, 250);
+}
