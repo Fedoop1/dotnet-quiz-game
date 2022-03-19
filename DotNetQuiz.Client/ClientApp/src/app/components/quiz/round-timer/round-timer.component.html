@@ -1,4 +1,12 @@
 <div class="round-timer">
-  <mat-progress-spinner [value]="roundProgress"></mat-progress-spinner>
-  <p>Times left: {{ timesLeft }}</p>
+  <div class="round-timer-spinner">
+    <mat-progress-spinner [value]="roundProgress"></mat-progress-spinner>
+  </div>
+  <div class="round-timer-text">
+    <p>
+      Times left: {{ minutesLeft | number: "2.0" }}:{{
+        secondsLeft | number: "2.0"
+      }}
+    </p>
+  </div>
 </div>

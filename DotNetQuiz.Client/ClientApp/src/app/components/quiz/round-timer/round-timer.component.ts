@@ -8,20 +8,20 @@ import { Component, Input } from '@angular/core';
 export class RoundTimerComponent {
   private timer: any;
 
-  private minutesLeft: number = 0;
-  private secondsLeft: number = 0;
+  public minutesLeft: number = 0;
+  public secondsLeft: number = 0;
 
   @Input() startAt: Date = new Date();
   @Input() endAt: Date = new Date();
 
   public get roundProgress(): number {
-    const roundProgress =
-      ((this.endAt.getTime() - this.startAt.getTime() / 1000) * 100) / 60;
-    return roundProgress > 100 ? 100 : roundProgress;
-  }
+    const totalSeconds = (this.endAt.getTime() - this.startAt.getTime()) / 1000;
 
-  public get timesLeft(): string {
-    return `${this.minutesLeft}:${this.secondsLeft}`;
+    let secondsPassed = (new Date().getTime() - this.startAt.getTime()) / 1000;
+
+    let roundProgress = (secondsPassed / totalSeconds) * 100;
+
+    return roundProgress > 100 ? 100 : Math.round(roundProgress);
   }
 
   public startTimer() {
@@ -35,11 +35,11 @@ export class RoundTimerComponent {
   }
 
   private updateTimer() {
-    let leftInMilliseconds = this.endAt.getTime() - Date.now();
+    let leftInSeconds = (this.endAt.getTime() - Date.now()) / 1000;
 
-    leftInMilliseconds = leftInMilliseconds < 0 ? 0 : leftInMilliseconds;
+    leftInSeconds = leftInSeconds < 0 ? 0 : leftInSeconds;
 
-    this.secondsLeft = (leftInMilliseconds / 1000) % 60;
-    this.minutesLeft = leftInMilliseconds / 1000 / 60;
+    this.secondsLeft = Math.floor(leftInSeconds % 60);
+    this.minutesLeft = Math.floor(leftInSeconds / 60);
   }
 }
