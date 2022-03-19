@@ -7,7 +7,7 @@ public static class ModelMapper
 {
     public static QuizRoundModel ToQuizRoundModel(this QuizRound quizRound) => new ()
     {
-        EndAt = quizRound.EndAt, StartAt = quizRound.StartAt, QuestionContent = quizRound.CurrentQuestion.Content
+        EndAt = quizRound.EndAt, StartAt = quizRound.StartAt, QuestionContent = quizRound.CurrentQuestion.Content, QuestionId = quizRound.CurrentQuestion.QuestionId
     };
 
     public static QuizSessionModel ToQuizSessionModel(this IQuizSessionHandler quizSessionHandler) => new()

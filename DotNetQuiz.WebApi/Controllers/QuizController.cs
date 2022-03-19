@@ -94,7 +94,7 @@ namespace DotNetQuiz.WebApi.Controllers
             await this.quizHubContext.Clients.Group(sessionId.ToString())
                 .SessionStateChanged(SessionState.Round);
 
-            return Ok();
+            return Ok(new { startAt = sessionHandler.CurrentRound.StartAt, endAt = sessionHandler.CurrentRound.EndAt });
         }
 
         [HttpGet]
@@ -104,6 +104,15 @@ namespace DotNetQuiz.WebApi.Controllers
         {
             var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
             return Ok(sessionHandler!.CurrentRound.ToQuizRoundModel());
+        }
+
+        [HttpGet]
+        [Route("{sessionId:guid}/[action]/")]
+        [SessionFilter]
+        public IActionResult GetQuizQuestions(Guid sessionId)
+        {
+            var sessionHandler = this.handlersManager.GetSessionHandler(sessionId);
+            return Ok(sessionHandler!.QuizConfiguration.QuestionPack?.Questions);
         }
 
         [HttpPost]
