@@ -1,7 +1,7 @@
 export enum SessionState {
   NotStarted = 1,
-  Round = 3,
+  Round = 2,
   LeaderBoard = 4,
-  RoundStatistic = 5,
-  Closed = 6,
+  RoundStatistic = 8,
+  Closed = 16,
 }
