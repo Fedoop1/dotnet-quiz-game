@@ -28,6 +28,8 @@ import { QuestionTypePipe } from './components/quiz/host/pipes/question-type.pip
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RoundTimerComponent } from './components/quiz/round-timer/round-timer.component';
 import { DateFormatterPipe } from './components/quiz/host/pipes/date-formatter.pipe';
+import { QuestionListComponent } from './components/question-list/question-list.component';
+import { SessionDeactivationGuard } from './guards/session-deactivation.guard';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,7 @@ import { DateFormatterPipe } from './components/quiz/host/pipes/date-formatter.p
     LeaderBoardComponent,
     QuestionComponent,
     RoundTimerComponent,
+    QuestionListComponent,
     // Pipes
     SortPipe,
     QuestionTypePipe,
@@ -63,7 +66,7 @@ import { DateFormatterPipe } from './components/quiz/host/pipes/date-formatter.p
     MatProgressSpinnerModule,
   ],
   exports: [MatIconModule, MatButtonModule],
-  providers: [QuizConfigurationService, QuizService],
+  providers: [QuizConfigurationService, QuizService, SessionDeactivationGuard],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

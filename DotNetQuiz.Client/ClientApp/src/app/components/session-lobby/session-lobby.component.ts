@@ -107,29 +107,31 @@ export class SessionLobbyComponent
           .subscribe()
     );
 
-    this.quizService.sessionState$
-      .pipe(
-        takeUntil(this.onDestroy$),
-        filter((sessionState) => sessionState === SessionState.Closed),
-        tap(() =>
-          this.router.navigate(['join-session'], {
-            queryParams: { sessionClosed: true },
+    if (!this.isHost) {
+      this.quizService.sessionState$
+        .pipe(
+          takeUntil(this.onDestroy$),
+          filter((sessionState) => sessionState === SessionState.Closed),
+          tap(() =>
+            this.router.navigate(['join-session'], {
+              queryParams: { sessionClosed: true },
+            })
+          )
+        )
+        .subscribe();
+
+      this.quizService.sessionState$
+        .pipe(
+          takeUntil(this.onDestroy$),
+          filter((sessionState) => sessionState === SessionState.Round),
+          tap(() => {
+            this.router.navigate(['quiz'], {
+              state: { quiz: this.getQuizData() },
+            });
           })
         )
-      )
-      .subscribe();
-
-    this.quizService.sessionState$
-      .pipe(
-        takeUntil(this.onDestroy$),
-        filter((sessionState) => sessionState === SessionState.Round),
-        tap(() => {
-          this.router.navigate(['quiz'], {
-            state: { quiz: this.getQuizData() },
-          });
-        })
-      )
-      .subscribe();
+        .subscribe();
+    }
   }
 
   private getQuizData(): QuizData {

@@ -55,7 +55,7 @@ export class QuizComponent extends DestroyableComponent implements OnInit {
     this.canvas.nativeElement.height = height;
   }
 
-  @ViewChild('timer') timer!: RoundTimerComponent;
+  @ViewChild(RoundTimerComponent) timer!: RoundTimerComponent;
 
   constructor(
     private readonly quizService: QuizService,
@@ -143,6 +143,7 @@ export class QuizComponent extends DestroyableComponent implements OnInit {
             takeUntil(this.onDestroy$),
             tap((quizRound) => {
               this.quizRound = quizRound;
+
               this.timer.startTimer();
               this.displayQuestion();
             })

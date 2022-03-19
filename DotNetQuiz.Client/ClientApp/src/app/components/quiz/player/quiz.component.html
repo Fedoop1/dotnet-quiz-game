@@ -1,7 +1,6 @@
 <ng-container *ngIf="sessionState === SessionState.Round && quizRound">
   <question [quizRound]="quizRound" [submitAnswer]="submitAnswer()"></question>
   <round-timer
-    #timer
     [startAt]="quizRound.startAt!"
     [endAt]="quizRound.endAt!"
   ></round-timer>

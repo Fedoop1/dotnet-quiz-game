@@ -6,14 +6,6 @@
     max-width: 500px;
     padding: 20px;
     margin: 20px;
-
-    &--large {
-      max-width: 1000px;
-    }
-  }
-
-  &-content:not(:first-child) {
-    margin-left: 15px;
   }
 
   .session-header {

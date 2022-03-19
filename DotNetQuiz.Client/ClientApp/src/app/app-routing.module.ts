@@ -7,16 +7,24 @@ import { JoinSessionComponent } from './components/join-session/join-session.com
 import { QuizHostComponent } from './components/quiz/host/quiz-host.component';
 import { QuizComponent } from './components/quiz/player/quiz.component';
 import { SessionLobbyComponent } from './components/session-lobby/session-lobby.component';
+import { SessionDeactivationGuard } from './guards/session-deactivation.guard';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
-  { path: 'create-session', component: CreateSessionComponent },
+  {
+    path: 'create-session',
+    component: CreateSessionComponent,
+  },
   { path: 'join-session', component: JoinSessionComponent },
   { path: 'create-account', component: CreateAccountComponent },
-  { path: 'session-lobby', component: SessionLobbyComponent },
+  {
+    path: 'session-lobby',
+    component: SessionLobbyComponent,
+  },
   {
     path: 'quiz-host',
     component: QuizHostComponent,
+    canDeactivate: [SessionDeactivationGuard],
   },
   {
     path: 'quiz',

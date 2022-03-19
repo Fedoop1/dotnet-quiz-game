@@ -3,7 +3,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { from, NEVER, Observable, of, Subject, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { QuizSession } from '../components/join-session/models/quiz-session.model';
 import AppConfiguration from '../models/constants/configuraion';
 import { SessionState } from '../models/enums/round-state.enum.model';
@@ -74,7 +74,7 @@ export class QuizService implements OnDestroy {
 
   public startRound(sessionId: string) {
     return this.httpClient
-      .post<string>(
+      .post<{ startAt: string; endAt: string }>(
         `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/StartRound`,
         undefined
       )
@@ -128,6 +128,25 @@ export class QuizService implements OnDestroy {
     return this.httpClient
       .get<QuizRound>(
         `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetQuizRound/`
+      )
+      .pipe(
+        catchError(this.catchResponseError),
+        map((quizRound) => {
+          if (quizRound.endAt && quizRound.startAt) {
+            // * Backend return date in JSON string format
+            quizRound.startAt = new Date(quizRound.startAt + '');
+            quizRound.endAt = new Date(quizRound.endAt + '');
+          }
+
+          return quizRound;
+        })
+      );
+  }
+
+  public getQuizQuestions(sessionId: string): Observable<Question[]> {
+    return this.httpClient
+      .get<Question[]>(
+        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetQuizQuestions/`
       )
       .pipe(catchError(this.catchResponseError));
   }
