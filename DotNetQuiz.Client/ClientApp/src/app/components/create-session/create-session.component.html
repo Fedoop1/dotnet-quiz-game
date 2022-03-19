@@ -90,29 +90,9 @@
       </button>
     </div>
   </div>
-  <div
-    *ngIf="quizConfiguration.questionPack"
-    class="component-container-content create-session-content--large"
-  >
-    <div class="create-session-questions-container table-responsive">
-      <table class="table" style="color: rgb(201, 197, 192)">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Content</th>
-            <th>Answer</th>
-            <th>Reward</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let question of quizConfiguration.questionPack.questions">
-            <td>{{ question.questionId }}</td>
-            <td>{{ question.content.questionText || "blob image" }}</td>
-            <td>{{ question.answer.answerContent }}</td>
-            <td>{{ question.questionReward }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div *ngIf="quizConfiguration.questionPack?.questions">
+    <question-list
+      [questions]="quizConfiguration.questionPack!.questions!"
+    ></question-list>
   </div>
 </div>
