@@ -1,12 +1,23 @@
 .quiz-host {
   max-width: 1000px;
+  height: 100%;
+  width: 100%;
+
+  .mat-tab-label,
+  .table {
+    color: rgb(201, 197, 192);
+  }
+
+  &-tabs-container {
+    min-height: 200px;
+  }
 
   &-content {
     padding: 20px;
   }
 
   &-round-data {
-    margin-top: 20px;
+    margin: 20px 0px;
     display: flex;
     justify-content: space-between;
 
