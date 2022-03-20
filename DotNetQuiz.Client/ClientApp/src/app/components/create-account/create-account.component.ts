@@ -11,12 +11,20 @@ import { QuizService } from 'src/app/services/quiz.service';
 export class CreateAccountComponent {
   public nickName!: string;
 
+  public get isInvalidNickname(): boolean {
+    return !this.nickName || !this.nickName?.trim().length;
+  }
+
   constructor(
     private readonly router: Router,
     private readonly route: ActivatedRoute
   ) {}
 
   public onJoinButtonClick() {
+    if (this.isInvalidNickname) {
+      return;
+    }
+
     this.router.navigate(['session-lobby'], {
       queryParams: {
         sessionId: this.route.snapshot.queryParams?.sessionId,

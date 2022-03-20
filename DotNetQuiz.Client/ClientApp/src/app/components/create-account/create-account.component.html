@@ -1,12 +1,15 @@
 <div class="component-container create-account">
   <div class="create-account-content">
-    <label for="nickName" class="input-label">User Name:</label>
-    <input
-      name="nickName"
-      type="text"
-      class="common-input"
-      [(ngModel)]="nickName"
-    />
+    <div class="create-account-controls-container">
+      <label for="nickName" class="input-label">User Name:</label>
+      <input
+        name="nickName"
+        type="text"
+        class="common-input"
+        [class.common-input--invalid]="isInvalidNickname"
+        [(ngModel)]="nickName"
+      />
+    </div>
     <div class="buttons-container">
       <button
         class="common-button create-account-submit"
@@ -20,6 +23,9 @@
       >
         Join
       </button>
+    </div>
+    <div *ngIf="isInvalidNickname" class="create-account-error-container">
+      <p class="validation-error">* Nickname can't be null or empty</p>
     </div>
   </div>
 </div>
