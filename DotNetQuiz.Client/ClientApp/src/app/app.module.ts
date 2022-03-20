@@ -30,6 +30,7 @@ import { RoundTimerComponent } from './components/quiz/round-timer/round-timer.c
 import { DateFormatterPipe } from './components/quiz/host/pipes/date-formatter.pipe';
 import { QuestionListComponent } from './components/question-list/question-list.component';
 import { SessionDeactivationGuard } from './guards/session-deactivation.guard';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { SessionDeactivationGuard } from './guards/session-deactivation.guard';
     MatButtonModule,
     MatTabsModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
   ],
   exports: [MatIconModule, MatButtonModule],
   providers: [QuizConfigurationService, QuizService, SessionDeactivationGuard],

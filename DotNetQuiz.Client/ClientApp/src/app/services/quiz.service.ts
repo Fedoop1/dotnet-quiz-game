@@ -22,9 +22,11 @@ export class QuizService implements OnDestroy {
   private _playerAdded$: Subject<QuizPlayer> = new Subject();
   private _playerRemoved$: Subject<QuizPlayer> = new Subject();
   private _sessionState$: Subject<SessionState> = new Subject();
+  private _processAnswer$: Subject<QuizPlayer> = new Subject();
 
   public playerAdded$ = this._playerAdded$.asObservable();
   public playerRemoved$ = this._playerRemoved$.asObservable();
+  public processAnswer$ = this._processAnswer$.asObservable();
   public sessionState$ = this._sessionState$.asObservable();
 
   constructor(
@@ -204,6 +206,10 @@ export class QuizService implements OnDestroy {
         this._sessionState$.next(sessionState);
       }
     );
+
+    this.quizHubConnection?.on('processAnswer', (player: QuizPlayer) => {
+      this._processAnswer$.next(player);
+    });
   }
 
   private catchResponseError(error: HttpErrorResponse) {
