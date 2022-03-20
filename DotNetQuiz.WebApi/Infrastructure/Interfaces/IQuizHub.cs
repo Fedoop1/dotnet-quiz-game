@@ -8,6 +8,7 @@ public interface IQuizHub
 {
     Task NextRound(QuizRoundModel quizRound);
     Task ReceiveQuestion(QuizPlayerAnswer answer);
+    Task ProcessAnswer(QuizPlayerModel quizPlayer);
     Task PlayerAdded(QuizPlayerModel quizPlayer);
     Task PlayerRemoved(QuizPlayerModel quizPlayer);
     Task SessionStateChanged(SessionState sessionState);
