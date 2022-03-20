@@ -1,8 +1,27 @@
 <div class="round-timer">
-  <div class="round-timer-spinner">
-    <mat-progress-spinner [value]="roundProgress"></mat-progress-spinner>
+  <div class="round-timer-spinner" *ngIf="kind === 'spinner'">
+    <mat-progress-spinner
+      [value]="roundProgress"
+      [color]="'warn'"
+    ></mat-progress-spinner>
   </div>
-  <div class="round-timer-text">
+  <div class="round-timer-progress-bar" *ngIf="kind === 'progressBar'">
+    <mat-progress-bar
+      class="example-margin"
+      [color]="'warn'"
+      [mode]="'determinate'"
+      [value]="roundProgress"
+    >
+    </mat-progress-bar>
+  </div>
+  <div
+    [ngClass]="[
+      'round-timer-text',
+      kind === 'spinner'
+        ? 'round-timer-text__spinner'
+        : 'round-timer-text__progressBar'
+    ]"
+  >
     <p>
       Times left: {{ minutesLeft | number: "2.0" }}:{{
         secondsLeft | number: "2.0"

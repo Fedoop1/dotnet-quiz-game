@@ -2,4 +2,14 @@
   &-spinner {
     margin-bottom: 10px;
   }
+
+  &-progress-bar {
+    margin-bottom: 10px;
+  }
+
+  &-text {
+    &__progressBar {
+      text-align: center;
+    }
+  }
 }

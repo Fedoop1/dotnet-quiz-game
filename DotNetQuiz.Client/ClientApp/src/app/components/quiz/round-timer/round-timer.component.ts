@@ -13,6 +13,7 @@ export class RoundTimerComponent {
 
   @Input() startAt: Date = new Date();
   @Input() endAt: Date = new Date();
+  @Input() kind: 'spinner' | 'progressBar' = 'spinner';
 
   public get roundProgress(): number {
     const totalSeconds = (this.endAt.getTime() - this.startAt.getTime()) / 1000;
