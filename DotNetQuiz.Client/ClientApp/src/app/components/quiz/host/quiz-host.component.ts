@@ -1,7 +1,7 @@
 import { registerLocaleData } from '@angular/common';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { switchMap, takeUntil, tap } from 'rxjs/operators';
+import { finalize, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { SessionState } from 'src/app/models/enums/round-state.enum.model';
 import { QuizData } from 'src/app/models/quiz-data.model';
 import { QuizPlayer } from 'src/app/models/quiz-player.model';
@@ -9,6 +9,8 @@ import { Question } from 'src/app/models/quiz-question.model';
 import { QuizRound } from 'src/app/models/quiz-round.model';
 import { QuizService } from 'src/app/services/quiz.service';
 import { DestroyableComponent } from 'src/app/utils/destroyable-component/destroyable.component';
+import { LeaderBoardComponent } from '../leader-board/leader-board.component';
+import { RoundStatisticComponent } from '../round-statistic/round-statistic.component';
 import { RoundTimerComponent } from '../round-timer/round-timer.component';
 import { DateFormat } from './models/date-format.enum';
 
@@ -19,6 +21,8 @@ import { DateFormat } from './models/date-format.enum';
   encapsulation: ViewEncapsulation.None,
 })
 export class QuizHostComponent extends DestroyableComponent implements OnInit {
+  public sessionState: SessionState = SessionState.Idle;
+
   public quizData!: QuizData;
   public currentRound!: QuizRound;
   public quizQuestions!: Question[];
@@ -27,14 +31,14 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
   public isFirstRound = true;
 
   public get isRoundButtonsDisabled(): boolean {
-    return (
-      !this.quizQuestions ||
-      !this.quizQuestions.length ||
-      (this.quizQuestions && this.quizQuestions?.length === 1)
-    );
+    return !this.quizQuestions || !this.quizQuestions.length;
   }
 
-  @ViewChild(RoundTimerComponent) timer!: RoundTimerComponent;
+  @ViewChild(RoundTimerComponent) timer?: RoundTimerComponent;
+  @ViewChild(LeaderBoardComponent) leaderBoard?: LeaderBoardComponent;
+  @ViewChild(RoundStatisticComponent) roundStatistic?: RoundStatisticComponent;
+
+  SessionState = SessionState;
 
   constructor(
     private readonly quizService: QuizService,
@@ -48,6 +52,7 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
 
     if (!this.quizData) this.router.navigate(['']);
 
+    this.setupSubscribers();
     this.loadData();
   }
 
@@ -62,10 +67,12 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
       .subscribe();
   }
 
+  // TODO: Mark question as completed after next round click instead of removing from the array
   public nextRound() {
     this.quizQuestions.splice(
       this.quizQuestions.findIndex(
-        (question) => question.questionId === this.currentRound.questionId
+        (question) =>
+          question.questionId === this.currentRound.question.questionId
       ),
       1
     );
@@ -74,6 +81,7 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
       .nextRound(this.quizData.sessionId)
       .pipe(
         takeUntil(this.onDestroy$),
+        finalize(() => (this.sessionState = SessionState.Idle)),
         switchMap(() => this.loadRound())
       )
       .subscribe();
@@ -85,6 +93,8 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
       .pipe(
         takeUntil(this.onDestroy$),
         tap((roundTime) => {
+          this.sessionState = SessionState.Round;
+
           const startAt = new Date(roundTime.startAt);
           const endAt = new Date(roundTime.endAt);
 
@@ -92,7 +102,7 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
           this.currentRound.endAt = endAt;
 
           setTimeout(() => {
-            this.timer.startTimer();
+            this.timer?.startTimer();
           });
         })
       )
@@ -104,7 +114,10 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
       .changeSessionState(this.quizData.sessionId, SessionState.RoundStatistic)
       .pipe(
         takeUntil(this.onDestroy$),
-        tap(() => this.timer.stopTimer())
+        tap(() => {
+          this.sessionState = SessionState.RoundStatistic;
+          this.timer?.stopTimer();
+        })
       )
       .subscribe();
   }
@@ -114,7 +127,10 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
       .changeSessionState(this.quizData.sessionId, SessionState.LeaderBoard)
       .pipe(
         takeUntil(this.onDestroy$),
-        tap(() => this.timer.stopTimer())
+        tap(() => {
+          this.sessionState = SessionState.LeaderBoard;
+          this.timer?.stopTimer();
+        })
       )
       .subscribe();
   }
@@ -129,5 +145,17 @@ export class QuizHostComponent extends DestroyableComponent implements OnInit {
       takeUntil(this.onDestroy$),
       tap((round) => (this.currentRound = round))
     );
+  }
+
+  private setupSubscribers() {
+    this.quizService.processAnswer$
+      .pipe(
+        takeUntil(this.onDestroy$),
+        tap(() => {
+          this.leaderBoard?.updateData();
+          this.roundStatistic?.updateData();
+        })
+      )
+      .subscribe();
   }
 }

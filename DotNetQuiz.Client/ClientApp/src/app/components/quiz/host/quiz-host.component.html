@@ -1,7 +1,7 @@
 <div class="component-container quiz-host">
   <div class="component-container-content quiz-host-content">
     <div class="quiz-host-tabs-container">
-      <mat-tab-group mat-align-tabs="start">
+      <mat-tab-group mat-align-tabs="start" [color]="'warm'">
         <mat-tab label="Leader Board"
           ><leader-board [sessionId]="quizData.sessionId"></leader-board
         ></mat-tab>
@@ -14,11 +14,11 @@
       <div class="quiz-host-round-question-content">
         <p>
           Question content:
-          {{ currentRound.questionContent.questionText || "Blob data" }}
+          {{ currentRound.question.content.questionText || "Blob content" }}
         </p>
         <p>
           Question type:
-          {{ currentRound.questionContent.questionType | questionType }}
+          {{ currentRound.question.questionType | questionType }}
         </p>
         <p>
           Start at:
@@ -53,7 +53,9 @@
       <div class="quiz-host-action">
         <button
           class="common-button"
-          [disabled]="isRoundButtonsDisabled"
+          [disabled]="
+            isRoundButtonsDisabled || sessionState === SessionState.Round
+          "
           (click)="startRound()"
         >
           Start Round
@@ -62,24 +64,43 @@
       <div class="quiz-host-action">
         <button
           class="common-button"
-          [disabled]="isRoundButtonsDisabled"
+          [disabled]="
+            isRoundButtonsDisabled || this.quizQuestions?.length === 1
+          "
           (click)="nextRound()"
         >
           Next round
         </button>
       </div>
       <div class="quiz-host-action">
-        <button class="common-button" (click)="closeSession()">
+        <button
+          class="common-button"
+          [disabled]="isRoundButtonsDisabled"
+          (click)="closeSession()"
+        >
           Close session
         </button>
       </div>
       <div class="quiz-host-action">
-        <button class="common-button" (click)="showStatistic()">
+        <button
+          class="common-button"
+          [disabled]="
+            isRoundButtonsDisabled ||
+            sessionState === SessionState.RoundStatistic
+          "
+          (click)="showStatistic()"
+        >
           Show Statistic
         </button>
       </div>
       <div class="quiz-host-action">
-        <button class="common-button" (click)="showLeaderBoard()">
+        <button
+          class="common-button"
+          [disabled]="
+            isRoundButtonsDisabled || sessionState === SessionState.LeaderBoard
+          "
+          (click)="showLeaderBoard()"
+        >
           Show Leader Board
         </button>
       </div>
@@ -88,7 +109,7 @@
   <div *ngIf="quizQuestions" class="quiz-host-content">
     <question-list
       [questions]="quizQuestions"
-      [selectedQuestionId]="currentRound.questionId"
+      [selectedQuestionId]="currentRound.question.questionId"
     ></question-list>
   </div>
 </div>
