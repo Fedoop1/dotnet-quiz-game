@@ -26,6 +26,10 @@ export class RoundStatisticComponent
     this.loadData();
   }
 
+  public updateData() {
+    this.loadData();
+  }
+
   private loadData() {
     this.quizService
       .getRoundStatistic(this.sessionId)

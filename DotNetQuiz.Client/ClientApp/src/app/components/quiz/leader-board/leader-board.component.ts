@@ -14,15 +14,33 @@ export class LeaderBoardComponent
   implements OnInit
 {
   public quizPlayers: QuizPlayer[] = [];
-  public sortByScore = (lhs: QuizPlayer, rhs: QuizPlayer) =>
-    lhs.score - rhs.score;
+  public sortByScore = (lhs: QuizPlayer, rhs: QuizPlayer) => {
+    if (!lhs.score && !rhs.score) {
+      return 0;
+    }
+
+    if (!lhs.score) {
+      return 1;
+    }
+
+    if (!rhs.score) {
+      return 1;
+    }
+
+    return lhs.score - rhs.score;
+  };
 
   @Input() sessionId!: string;
+
   constructor(private readonly quizService: QuizService) {
     super();
   }
 
   ngOnInit(): void {
+    this.loadData();
+  }
+
+  public updateData() {
     this.loadData();
   }
 
