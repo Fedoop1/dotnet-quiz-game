@@ -12,10 +12,16 @@
 .common-input {
   border-radius: 6px;
   border-width: 0px;
+
+  &--invalid {
+    border-radius: 3px;
+    border-color: rgb(212, 31, 31);
+  }
 }
 
 .input-label {
   margin-right: 8px;
+  font-size: 18px;
 
   &-file {
     width: 100%;
