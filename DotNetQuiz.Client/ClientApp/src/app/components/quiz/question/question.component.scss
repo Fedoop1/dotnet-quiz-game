@@ -1,0 +1,67 @@
+.quiz {
+  $base-color: #036;
+
+  &-canvas {
+    border-radius: 8px;
+  }
+
+  .quiz-option {
+    &__1 {
+      button {
+        background-color: rgb(39, 138, 39);
+      }
+    }
+
+    &__2 {
+      button {
+        background-color: rgb(192, 60, 60);
+      }
+    }
+
+    &__3 {
+      button {
+        background-color: rgb(56, 97, 185);
+      }
+    }
+
+    &__4 {
+      button {
+        background-color: rgb(149, 61, 184);
+      }
+    }
+
+    &__5 {
+      button {
+        background-color: rgb(214, 164, 70);
+      }
+    }
+
+    &__6 {
+      button {
+        background-color: rgb(196, 55, 149);
+      }
+    }
+
+    &__7 {
+      button {
+        background-color: rgb(156, 184, 55);
+      }
+    }
+
+    &__8 {
+      button {
+        background-color: rgb(57, 145, 196);
+      }
+    }
+  }
+
+  &-options-container {
+    &--type {
+      justify-content: center;
+
+      .quiz-input {
+        margin-right: 15px;
+      }
+    }
+  }
+}

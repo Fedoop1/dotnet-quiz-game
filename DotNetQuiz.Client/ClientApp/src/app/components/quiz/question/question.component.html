@@ -9,22 +9,38 @@
   </div>
   <div
     class="buttons-container quiz-options-container--select"
-    *ngIf="quizRound.questionContent.questionType === QuestionType.Select"
+    *ngIf="quizRound.question.questionType === QuestionType.Select"
   >
     <div
-      *ngFor="let questionOption of quizRound.questionContent.questionOptions"
-      class="quiz-option"
-      (click)="submitAnswer(questionOption)"
+      *ngFor="
+        let questionOption of quizRound.question.options;
+        let index = index
+      "
+      [class]="'quiz-option__' + (index + 1)"
     >
-      <p>{{ questionOption }}</p>
+      <button
+        (click)="submitAnswer(questionOption)"
+        [disabled]="isButtonDisabled"
+        class="common-button quiz-option-button"
+      >
+        {{ questionOption }}
+      </button>
     </div>
   </div>
   <div
     class="buttons-container quiz-options-container--type"
-    *ngIf="quizRound.questionContent.questionType === QuestionType.Type"
+    *ngIf="quizRound.question.questionType === QuestionType.Type"
   >
-    <input #quizInput class="common-input quiz-input" />
-    <button class="quiz-submit-button" (click)="submitAnswer(quizInput.value)">
+    <input
+      #quizInput
+      class="common-input quiz-input"
+      [disabled]="isButtonDisabled"
+    />
+    <button
+      class="common-button quiz-submit-button"
+      [disabled]="isButtonDisabled"
+      (click)="submitAnswer(quizInput.value)"
+    >
       Submit
     </button>
   </div>
