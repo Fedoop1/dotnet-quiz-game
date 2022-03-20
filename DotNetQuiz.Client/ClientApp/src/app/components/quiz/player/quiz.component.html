@@ -1,13 +1,31 @@
-<ng-container *ngIf="sessionState === SessionState.Round && quizRound">
-  <question [quizRound]="quizRound" [submitAnswer]="submitAnswer()"></question>
-  <round-timer
-    [startAt]="quizRound.startAt!"
-    [endAt]="quizRound.endAt!"
-  ></round-timer>
-</ng-container>
-<ng-container *ngIf="sessionState === SessionState.LeaderBoard">
-  <leader-board [sessionId]="quizData.sessionId"></leader-board>
-</ng-container>
-<ng-container *ngIf="sessionState === SessionState.RoundStatistic"
-  ><round-statistic [sessionId]="quizData.sessionId"></round-statistic
-></ng-container>
+<div class="component-container quiz">
+  <div class="component-container-content quiz-content">
+    <ng-container *ngIf="sessionState === SessionState.Idle">
+      <div class="quiz-idle">
+        <p>We will start soon. Waiting for session host.</p>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="sessionState === SessionState.Round && quizRound">
+      <div class="quiz-question">
+        <question
+          [quizRound]="quizRound"
+          [submitAnswer]="submitAnswer()"
+          [isButtonDisabled]="isButtonDisabled"
+        ></question>
+      </div>
+      <div class="quiz-question-timer">
+        <round-timer
+          [kind]="'progressBar'"
+          [startAt]="quizRound.startAt!"
+          [endAt]="quizRound.endAt!"
+        ></round-timer>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="sessionState === SessionState.LeaderBoard">
+      <leader-board [sessionId]="quizData.sessionId"></leader-board>
+    </ng-container>
+    <ng-container *ngIf="sessionState === SessionState.RoundStatistic"
+      ><round-statistic [sessionId]="quizData.sessionId"></round-statistic
+    ></ng-container>
+  </div>
+</div>

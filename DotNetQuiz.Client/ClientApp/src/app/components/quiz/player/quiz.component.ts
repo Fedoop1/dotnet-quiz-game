@@ -5,18 +5,16 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { takeUntil, tap } from 'rxjs/operators';
 import { QuestionType } from 'src/app/models/enums/question-type.enum';
 import { SessionState } from 'src/app/models/enums/round-state.enum.model';
 import { QuizData } from 'src/app/models/quiz-data.model';
 import { QuizPlayerAnswer } from 'src/app/models/quiz-player-answer.model';
-import { Question } from 'src/app/models/quiz-question.model';
 import { QuizRound } from 'src/app/models/quiz-round.model';
-import { RoundStatistic } from 'src/app/models/round-statistic.model';
 import { QuizService } from 'src/app/services/quiz.service';
 import { DestroyableComponent } from 'src/app/utils/destroyable-component/destroyable.component';
-import { byteArrayToBase64 } from 'src/app/utils/image.util';
+import { QuestionComponent } from '../question/question.component';
 import { RoundTimerComponent } from '../round-timer/round-timer.component';
 
 @Component({
@@ -25,37 +23,25 @@ import { RoundTimerComponent } from '../round-timer/round-timer.component';
   styleUrls: ['quiz.component.scss'],
 })
 export class QuizComponent extends DestroyableComponent implements OnInit {
-  private readonly canvasDefaultSize = {
-    width: 800,
-    height: 400,
-  };
+  private _sessionState = SessionState.Idle;
 
   public quizData!: QuizData;
-  public sessionState: SessionState = SessionState.Round;
   public quizRound!: QuizRound;
+  public isButtonDisabled: boolean = false;
 
   public QuestionType = QuestionType;
   public SessionState = SessionState;
 
-  @ViewChild('canvas') canvas!: ElementRef<HTMLCanvasElement>;
-
-  public get canvasWidth(): number {
-    return this.canvas.nativeElement.width;
+  public get sessionState(): SessionState {
+    return this._sessionState;
   }
 
-  public get canvasHeight(): number {
-    return this.canvas.nativeElement.height;
+  public set sessionState(sessionState: SessionState) {
+    this._sessionState = sessionState;
   }
 
-  public set canvasWidth(width: number) {
-    this.canvas.nativeElement.height = width;
-  }
-
-  public set canvasHeight(height: number) {
-    this.canvas.nativeElement.height = height;
-  }
-
-  @ViewChild(RoundTimerComponent) timer!: RoundTimerComponent;
+  @ViewChild(RoundTimerComponent) timer?: RoundTimerComponent;
+  @ViewChild(QuestionComponent) question?: QuestionComponent;
 
   constructor(
     private readonly quizService: QuizService,
@@ -70,11 +56,15 @@ export class QuizComponent extends DestroyableComponent implements OnInit {
       const questionAnswer: QuizPlayerAnswer = {
         playerId: this.quizData.player.id,
         answerContent: answer,
-        answerTime: this.quizRound.startAt!.getTime() - Date.now(),
+        answerTime: Date.now() - this.quizRound.startAt!.getTime(),
       };
 
       this.quizService
         .submitAnswer(questionAnswer, this.quizData.sessionId)
+        .pipe(
+          takeUntil(this.onDestroy$),
+          tap(() => (this.isButtonDisabled = true))
+        )
         .subscribe();
     };
   }
@@ -101,34 +91,6 @@ export class QuizComponent extends DestroyableComponent implements OnInit {
       .subscribe();
   }
 
-  private displayQuestion() {
-    const context = this.canvas.nativeElement.getContext('2d');
-    this.clearCanvas(context);
-
-    if (this.quizRound.questionContent.questionText) {
-      this.canvasWidth = this.canvasDefaultSize.width;
-      this.canvasHeight = this.canvasDefaultSize.height;
-
-      context?.fillText(
-        this.quizRound.questionContent.questionText,
-        this.canvasWidth / 2,
-        this.canvasHeight / 2,
-        this.canvasWidth / 3
-      );
-    } else if (this.quizRound.questionContent.questionBlob) {
-      const image = new Image(this.canvasWidth, this.canvasHeight);
-      image.src =
-        'data:image/png;base64,' +
-        byteArrayToBase64(this.quizRound.questionContent.questionBlob);
-
-      context?.drawImage(image, 0, 0);
-    }
-  }
-
-  private clearCanvas(context: CanvasRenderingContext2D | null) {
-    context?.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-  }
-
   private processSessionStateChange() {
     switch (this.sessionState) {
       case SessionState.Closed:
@@ -143,9 +105,12 @@ export class QuizComponent extends DestroyableComponent implements OnInit {
             takeUntil(this.onDestroy$),
             tap((quizRound) => {
               this.quizRound = quizRound;
+              this.isButtonDisabled = false;
 
-              this.timer.startTimer();
-              this.displayQuestion();
+              setTimeout(() => {
+                this.question?.displayQuestion();
+                this.timer?.startTimer();
+              });
             })
           )
           .subscribe();

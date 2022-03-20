@@ -1,0 +1,19 @@
+.quiz {
+  width: 100%;
+  height: 100%;
+
+  &-content {
+    padding: 20px;
+  }
+
+  &-question {
+    margin-bottom: 20px;
+  }
+
+  &-idle {
+    p {
+      margin: 0;
+      font-size: 48px;
+    }
+  }
+}
