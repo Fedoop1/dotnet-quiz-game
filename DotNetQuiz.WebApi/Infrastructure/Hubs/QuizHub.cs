@@ -15,10 +15,15 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
         public QuizHub(IQuizHandlersManager handlersManager, ILogger<QuizHub> logger) =>
             (this.handlersManager, this.logger) = (handlersManager, logger);
 
-        // TODO: Add implementation
-        public void ProcessAnswer(string sessionId, QuizPlayerAnswer answer)
+        public async void ProcessAnswer(string sessionId, QuizPlayerAnswer answer)
         {
             this.LogProcessAnswer(sessionId, this.Context.ConnectionId);
+            var sessionHandler = this.handlersManager.GetSessionHandler(Guid.Parse(sessionId));
+
+            if (sessionHandler == null) return;
+
+            sessionHandler.SubmitAnswer(answer);
+            await this.Clients.OthersInGroup(sessionId).ProcessAnswer(new QuizPlayerModel { Id = answer.PlayerId });
         }
 
         public async Task ChangeSessionState(string sessionId, SessionState sessionState)

@@ -5,9 +5,9 @@ using DotNetQuiz.WebApi.Models;
 namespace DotNetQuiz.WebApi.Infrastructure.Extensions;
 public static class ModelMapper
 {
-    public static QuizRoundModel ToQuizRoundModel(this QuizRound quizRound) => new ()
+    public static QuizRoundModel ToQuizRoundModel(this QuizRound quizRound) => new()
     {
-        EndAt = quizRound.EndAt, StartAt = quizRound.StartAt, QuestionContent = quizRound.CurrentQuestion.Content, QuestionId = quizRound.CurrentQuestion.QuestionId
+        EndAt = quizRound.EndAt, StartAt = quizRound.StartAt, Question = quizRound.CurrentQuestion
     };
 
     public static QuizSessionModel ToQuizSessionModel(this IQuizSessionHandler quizSessionHandler) => new()

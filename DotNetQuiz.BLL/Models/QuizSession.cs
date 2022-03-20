@@ -36,7 +36,7 @@ namespace DotNetQuiz.BLL.Models
         {
             ArgumentNullException.ThrowIfNull(answer, nameof(answer));
 
-            if(DateTime.Now > this.CurrentRound.EndAt)
+            if(DateTime.Now > this.CurrentRound.EndAt) return;
 
             this.ProcessPlayerAnswer(answer);
             (this.CurrentRound.Answers as IList<QuizPlayerAnswer>)!.Add(answer);
