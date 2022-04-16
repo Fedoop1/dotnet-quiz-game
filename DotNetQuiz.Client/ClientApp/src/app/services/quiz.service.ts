@@ -2,10 +2,10 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { from, NEVER, Observable, of, Subject, throwError } from 'rxjs';
+import { from, Observable, of, Subject, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { QuizSession } from '../components/join-session/models/quiz-session.model';
-import AppConfiguration from '../models/constants/configuraion';
 import { SessionState } from '../models/enums/round-state.enum.model';
 import { QuizConfiguration } from '../models/quiz-configuration.model';
 import { QuizPlayerAnswer } from '../models/quiz-player-answer.model';
@@ -13,7 +13,6 @@ import { QuizPlayer } from '../models/quiz-player.model';
 import { Question } from '../models/quiz-question.model';
 import { QuizRound } from '../models/quiz-round.model';
 import { RoundStatistic } from '../models/round-statistic.model';
-import { DestroyableComponent } from '../utils/destroyable-component/destroyable.component';
 
 @Injectable()
 export class QuizService implements OnDestroy {
@@ -41,7 +40,7 @@ export class QuizService implements OnDestroy {
   public createQuizSession(): Observable<string> {
     return this.httpClient
       .post<string>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/Create`,
+        `${environment.backendServerAddress}/api/quiz/Create`,
         undefined
       )
       .pipe(catchError(this.catchResponseError));
@@ -50,7 +49,7 @@ export class QuizService implements OnDestroy {
   public startGame(sessionId: string) {
     return this.httpClient
       .post<string>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/StartGame`,
+        `${environment.backendServerAddress}/api/quiz/${sessionId}/StartGame`,
         undefined
       )
       .pipe(catchError(this.catchResponseError));
@@ -59,7 +58,7 @@ export class QuizService implements OnDestroy {
   public removeQuizSession(sessionId: string): Observable<string> {
     return this.httpClient
       .post<string>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/Remove`,
+        `${environment.backendServerAddress}/api/quiz/${sessionId}/Remove`,
         undefined
       )
       .pipe(catchError(this.catchResponseError));
@@ -68,7 +67,7 @@ export class QuizService implements OnDestroy {
   public nextRound(sessionId: string) {
     return this.httpClient
       .post<string>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/NextRound`,
+        `${environment.backendServerAddress}/api/quiz/${sessionId}/NextRound`,
         undefined
       )
       .pipe(catchError(this.catchResponseError));
@@ -77,7 +76,7 @@ export class QuizService implements OnDestroy {
   public startRound(sessionId: string) {
     return this.httpClient
       .post<{ startAt: string; endAt: string }>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/StartRound`,
+        `${environment.backendServerAddress}/api/quiz/${sessionId}/StartRound`,
         undefined
       )
       .pipe(catchError(this.catchResponseError));
@@ -103,7 +102,7 @@ export class QuizService implements OnDestroy {
   ): Observable<void> {
     return this.httpClient
       .post<void>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/Configure/`,
+        `${environment.backendServerAddress}/api/quiz/${sessionId}/Configure/`,
         quizConfiguration,
         undefined
       )
@@ -113,7 +112,7 @@ export class QuizService implements OnDestroy {
   public getPlayerInfo(sessionId: string, nickName: string) {
     return this.httpClient
       .get<QuizPlayer>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetPlayerInfo/${nickName}/`
+        `${environment.backendServerAddress}/api/quiz/${sessionId}/GetPlayerInfo/${nickName}/`
       )
       .pipe(catchError(this.catchResponseError));
   }
@@ -121,7 +120,7 @@ export class QuizService implements OnDestroy {
   public getRoundStatistic(sessionId: string): Observable<RoundStatistic> {
     return this.httpClient
       .get<RoundStatistic>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetRoundStatistic/`
+        `${environment.backendServerAddress}/api/quiz/${sessionId}/GetRoundStatistic/`
       )
       .pipe(catchError(this.catchResponseError));
   }
@@ -129,7 +128,7 @@ export class QuizService implements OnDestroy {
   public getQuizRound(sessionId: string): Observable<QuizRound> {
     return this.httpClient
       .get<QuizRound>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetQuizRound/`
+        `${environment.backendServerAddress}/api/quiz/${sessionId}/GetQuizRound/`
       )
       .pipe(
         catchError(this.catchResponseError),
@@ -148,7 +147,7 @@ export class QuizService implements OnDestroy {
   public getQuizQuestions(sessionId: string): Observable<Question[]> {
     return this.httpClient
       .get<Question[]>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetQuizQuestions/`
+        `${environment.backendServerAddress}/api/quiz/${sessionId}/GetQuizQuestions/`
       )
       .pipe(catchError(this.catchResponseError));
   }
@@ -156,7 +155,7 @@ export class QuizService implements OnDestroy {
   public getSessionPlayers(sessionId: string): Observable<QuizPlayer[]> {
     return this.httpClient
       .get<QuizPlayer[]>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/${sessionId}/GetSessionPlayers/`
+        `${environment.backendServerAddress}/api/quiz/${sessionId}/GetSessionPlayers/`
       )
       .pipe(catchError(this.catchResponseError));
   }
@@ -164,7 +163,7 @@ export class QuizService implements OnDestroy {
   public getQuizSessions(): Observable<QuizSession[]> {
     return this.httpClient
       .get<QuizSession[]>(
-        `${AppConfiguration.BackendServerAddress}/${AppConfiguration.QuizControllerAddress}/GetQuizSessions/`
+        `${environment.backendServerAddress}/api/quiz/GetQuizSessions/`
       )
       .pipe(catchError(this.catchResponseError));
   }
@@ -174,7 +173,7 @@ export class QuizService implements OnDestroy {
 
     this.quizHubConnection = new HubConnectionBuilder()
       .withUrl(
-        `${AppConfiguration.BackendServerAddress}/quiz/${
+        `${environment.backendServerAddress}/quiz/${
           this.route.snapshot.queryParams?.sessionId
         }/${isHost ? 'host' : userName}/${isHost}/`
       )
