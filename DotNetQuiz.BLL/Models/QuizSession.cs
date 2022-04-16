@@ -35,8 +35,9 @@ namespace DotNetQuiz.BLL.Models
         public void SubmitAnswer(QuizPlayerAnswer answer)
         {
             ArgumentNullException.ThrowIfNull(answer, nameof(answer));
+            ArgumentNullException.ThrowIfNull(this.CurrentRound.StartAt, nameof(answer));
 
-            if(DateTime.Now > this.CurrentRound.EndAt) return;
+            if (DateTime.Now > this.CurrentRound.EndAt) throw new ArgumentException("Answer can't be processed. Time's up");
 
             this.ProcessPlayerAnswer(answer);
             (this.CurrentRound.Answers as IList<QuizPlayerAnswer>)!.Add(answer);

@@ -12,7 +12,7 @@ public class QuizQuestionsHandler: IQuestionHandler
         var uncompletedQuestions = questions.Where(q => !q.IsCompleted).ToArray();
         if (uncompletedQuestions.Length == 0) return null;
 
-        Array.Sort(uncompletedQuestions);
+        Array.Sort(uncompletedQuestions, (lhs, rhs) => lhs.QuestionId - rhs.QuestionId);
 
         return uncompletedQuestions.First();
     }
