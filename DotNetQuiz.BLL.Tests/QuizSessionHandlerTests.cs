@@ -33,15 +33,6 @@ internal class QuizSessionHandlerTests
         Assert.Throws<ArgumentNullException>(() => new QuizSessionHandler(questionHandlerMock.Object, null!));
 
     [Test]
-    public void AddPlayerToSession_SessionIsAlreadyStarted_ThrowsArgumentException()
-    {
-        this.sessionHandler.StartGame();
-
-        Assert.Throws<ArgumentException>(() => this.sessionHandler.AddPlayerToSession(new QuizPlayer()),
-            "Session is already started!");
-    }
-
-    [Test]
     public void AddPlayerToSession_PlayerWithSameIdAlreadyExists_ThrowsArgumentException()
     {
         const string playerId = "id";
@@ -52,6 +43,20 @@ internal class QuizSessionHandlerTests
             () => this.sessionHandler.AddPlayerToSession(new QuizPlayer() {Id = playerId, NickName = "nickname" }),
             $"Player with id [{playerId}] already exists");
     }
+
+    [Test]
+    public void AddPlayerToSession_NullQuizPlayer_ThrowArgumentNullException() =>
+        Assert.Throws<ArgumentNullException>(() => this.sessionHandler.AddPlayerToSession(null!));
+
+    [Test]
+    public void AddPlayerToSession_PlayerHasEmptyId_ThrowsArgumentException() => Assert.Throws<ArgumentException>(
+        () => this.sessionHandler.AddPlayerToSession(new QuizPlayer() {Id = "", NickName = "nickname"}),
+        "Player id can't be null or empty");
+
+    [Test]
+    public void AddPlayerToSession_PlayerHasEmptyNickName_ThrowsArgumentException() => Assert.Throws<ArgumentException>(
+        () => this.sessionHandler.AddPlayerToSession(new QuizPlayer() {Id = "id", NickName = ""}),
+        "Player name can't be null or empty");
 
     [Test]
     public void AddPlayerToSession_SessionPlayersContainsNewPlayer()
@@ -88,18 +93,34 @@ internal class QuizSessionHandlerTests
         Assert.Throws<ArgumentNullException>(() => this.sessionHandler.SubmitAnswer(null!));
 
     [Test]
-    public void SubmitAnswer_SessionIsNotStarted_ThrowArgumentException() =>
-        Assert.Throws<ArgumentException>(() => this.sessionHandler.SubmitAnswer(new QuizPlayerAnswer()),
-            "Session is not established!");
+    public void SubmitAnswer_SessionIsNotStarted_ThrowArgumentNullException() =>
+        Assert.Throws<ArgumentNullException>(() => this.sessionHandler.SubmitAnswer(new QuizPlayerAnswer()));
 
     [Test]
-    public void NextRound_SessionIsNotStarted_ThrowArgumentException() => Assert.Throws<ArgumentException>(
-        () => this.sessionHandler.NextRound(),
-        "Session is not established!");
+    public void NextRound_SessionIsNotStarted_ThrowArgumentNullException() => Assert.Throws<ArgumentNullException>(
+        () => this.sessionHandler.NextRound());
 
     [Test]
-    public void BuildCurrentRoundStatistic_SessionIsNotStarted_ThrowArgumentException() =>
-        Assert.Throws<ArgumentException>(() => this.sessionHandler.BuildCurrentRoundStatistic());
+    public void BuildCurrentRoundStatistic_SessionIsNotStarted_ThrowArgumentNullException() =>
+        Assert.Throws<ArgumentNullException>(() => this.sessionHandler.BuildCurrentRoundStatistic());
+
+    [Test]
+    public void StartGame_GameIsAlreadyStarted_ThrowsArgumentExceptions() => Assert.Throws<ArgumentException>(() =>
+    {
+        this.sessionHandler.StartGame();
+        this.sessionHandler.StartGame();
+    }, "The game is already started");
+
+    [Test]
+    public void StartGame_CurrentRoundIsNotNull()
+    {
+        this.sessionHandler.StartGame();
+        Assert.That(this.sessionHandler.CurrentRound, Is.Not.Null);
+    }
+
+    [Test]
+    public void StartGame_ConfigurationIsNull_ThrowsArgumentExceptions() => Assert.Throws<ArgumentNullException>(() =>
+            new QuizSessionHandler(this.questionHandlerMock.Object, this.roundStatisticAnalyzerMock.Object).StartGame());
 }
 
 

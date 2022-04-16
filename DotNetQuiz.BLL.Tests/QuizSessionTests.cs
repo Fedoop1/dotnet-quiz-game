@@ -21,7 +21,7 @@ public class QuizSessionTests
         this.questionHandlerMock = new Mock<IQuestionHandler>();
 
         this.questionHandlerMock.Setup(mock => mock.NextQuestion(It.IsAny<IEnumerable<QuizQuestion>>()))
-            .Returns(DefaultQuizConfiguration.QuestionPack.Questions.First());
+            .Returns(DefaultQuizConfiguration.QuestionPack!.Questions!.First());
 
         this.roundStatisticAnalyzerMock = new Mock<IRoundStatisticAnalyzer>();
         this.defaultQuizSession = new QuizSession(DefaultQuizConfiguration, QuizPlayers, questionHandlerMock.Object,
@@ -68,7 +68,11 @@ public class QuizSessionTests
 
     [Test]
     public void SubmitAnswer_NullQuizPlayerAnswer_ThrowsArgumentNullException() =>
-        Assert.Throws<ArgumentNullException>(() => this.defaultQuizSession.SubmitAnswer(null!));
+        Assert.Throws<ArgumentNullException>(() =>
+        {
+            this.defaultQuizSession.StartRound();
+            this.defaultQuizSession.SubmitAnswer(null!);
+        });
 
 
     [TestCase( 0, 1, 0, 0, "wrongAnswer")]
@@ -90,6 +94,7 @@ public class QuizSessionTests
             roundStatisticAnalyzerMock.Object
         );
 
+        session.StartRound();
         session.SubmitAnswer(wrongAnswer);
 
         Assert.Multiple(() =>
@@ -103,5 +108,26 @@ public class QuizSessionTests
     public void NextRound_LeftQuestionIsEqualsZero_ThrowsArgumentOutOfRangeException() =>
         Assert.Throws<ArgumentOutOfRangeException>(() => this.defaultQuizSession.NextRound(),
             "There are no more questions.");
+
+    [Test]
+    public void StartRound_RoundIsAlreadyStarted_ThrowArgumentException() =>
+        Assert.Throws<ArgumentException>(() =>
+            {
+                this.defaultQuizSession.StartRound();
+                this.defaultQuizSession.StartRound();
+            },
+            "Round is already started");
+
+    [Test]
+    public void StartRound_CurrentRoundStartAndEndTimeIsUpdated()
+    {
+        this.defaultQuizSession.StartRound();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(this.defaultQuizSession.CurrentRound.StartAt, Is.Not.Null);
+            Assert.That(this.defaultQuizSession.CurrentRound.EndAt, Is.Not.Null);
+        });
+    }
 }
 
