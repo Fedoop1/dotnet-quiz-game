@@ -12,6 +12,7 @@ public interface IQuizHub
     Task PlayerAdded(QuizPlayerModel quizPlayer);
     Task PlayerRemoved(QuizPlayerModel quizPlayer);
     Task SessionStateChanged(SessionState sessionState);
+    Task Error(HubError hubError);
 
 }
 

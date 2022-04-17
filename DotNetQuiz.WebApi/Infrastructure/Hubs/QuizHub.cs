@@ -17,19 +17,35 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
 
         public async void ProcessAnswer(string sessionId, QuizPlayerAnswer answer)
         {
-            this.LogProcessAnswer(sessionId, this.Context.ConnectionId);
-            var sessionHandler = this.handlersManager.GetSessionHandler(Guid.Parse(sessionId));
+            try
+            {
+                this.LogProcessAnswer(sessionId, this.Context.ConnectionId);
+                var sessionHandler = this.handlersManager.GetSessionHandler(Guid.Parse(sessionId));
 
-            if (sessionHandler == null) return;
+                if (sessionHandler == null) return;
 
-            sessionHandler.SubmitAnswer(answer);
-            await this.Clients.OthersInGroup(sessionId).ProcessAnswer(new QuizPlayerModel { Id = answer.PlayerId });
+                sessionHandler.SubmitAnswer(answer);
+                await this.Clients.OthersInGroup(sessionId).ProcessAnswer(new QuizPlayerModel { Id = answer.PlayerId });
+            }
+            catch (Exception e)
+            {
+                this.LogError(nameof(e), e.Message);
+                this.Error(new HubError("Answer processing error", e.Message));
+            }
         }
 
         public async Task ChangeSessionState(string sessionId, SessionState sessionState)
         {
-            await this.Clients.OthersInGroup(sessionId).SessionStateChanged(sessionState);
-            this.LogChangeSessionState(sessionId, Enum.GetName(typeof(SessionState), sessionState)!);
+            try
+            {
+                await this.Clients.OthersInGroup(sessionId).SessionStateChanged(sessionState);
+                this.LogChangeSessionState(sessionId, Enum.GetName(typeof(SessionState), sessionState)!);
+            }
+            catch (Exception e)
+            {
+                this.LogError(nameof(e), e.Message);
+                this.Error(new HubError("Session state changing error", e.Message));
+            }
         }
 
         public override async Task OnConnectedAsync()
@@ -61,7 +77,17 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
 
             var quizPlayer = new QuizPlayer { Id = connectionId, NickName = routeData.nickName };
 
-            sessionHandler.AddPlayerToSession(quizPlayer);
+
+            try
+            {
+                sessionHandler.AddPlayerToSession(quizPlayer);
+            }
+            catch (Exception e)
+            {
+                this.LogError(nameof(e), e.Message);
+                this.Context.Abort();
+            }
+            
             await this.Groups.AddToGroupAsync(connectionId, routeData.sessionId.ToString());
 
             await this.Clients.OthersInGroup(routeData.sessionId.ToString())
@@ -116,6 +142,8 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
             this.LogLeaveSession(routeData.sessionId, connectionId, sessionPlayer?.NickName);
             await base.OnDisconnectedAsync(exception);
         }
+
+        private void Error(HubError hubError) => Task.Run(() => Clients.Caller.Error(hubError));
 
         private bool TryExtractRouteData(out (Guid sessionId, string nickName, bool isHost) routeData)
         {
@@ -178,6 +206,9 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
 
         [LoggerMessage(11, LogLevel.Information, "Change session state. Session id: {sessionId}. Session state {sessionState}.")]
         private partial void LogChangeSessionState(string sessionId, string sessionState);
+
+        [LoggerMessage(12, LogLevel.Error, "An error occurred. Error: {error}. Error message: {errorMessage}")]
+        private partial void LogError(string error, string errorMessage);
 
         #endregion
     }
