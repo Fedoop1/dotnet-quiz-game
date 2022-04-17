@@ -23,6 +23,7 @@ steps:
   inputs:
     command: 'test'
     projects: '**/*.csproj'
+  displayName: 'dotnet test of DotNetQuiz sln.'
 
 - task: Npm@1
   inputs:
