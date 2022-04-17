@@ -1,0 +1,11 @@
+<div
+  class="error-notification"
+  *ngIf="errorNotificationService.notification$ | async as notification"
+>
+  <div class="error-notification-title">
+    <mat-icon>warning</mat-icon>
+    <h3>{{ notification.title }}</h3>
+    <mat-icon (click)="close()">close</mat-icon>
+  </div>
+  <div class="error-notification-message">{{ notification.message }}</div>
+</div>

@@ -1,6 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpClientModule,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -31,6 +35,9 @@ import { DateFormatterPipe } from './components/quiz/host/pipes/date-formatter.p
 import { QuestionListComponent } from './components/question-list/question-list.component';
 import { SessionDeactivationGuard } from './guards/session-deactivation.guard';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { HttpErrorInterceptor } from './utils/http-error.interceptor';
+import { ErrorNotificationComponent } from './utils/error-notification/error-notification.component';
+import { ErrorNotificationService } from './services/error-notification.service';
 
 @NgModule({
   declarations: [
@@ -47,6 +54,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     QuestionComponent,
     RoundTimerComponent,
     QuestionListComponent,
+    ErrorNotificationComponent,
     // Pipes
     SortPipe,
     QuestionTypePipe,
@@ -68,7 +76,13 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatProgressBarModule,
   ],
   exports: [MatIconModule, MatButtonModule],
-  providers: [QuizConfigurationService, QuizService, SessionDeactivationGuard],
+  providers: [
+    QuizConfigurationService,
+    QuizService,
+    SessionDeactivationGuard,
+    ErrorNotificationService,
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
