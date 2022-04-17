@@ -2,8 +2,11 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+import { Environments } from './enums/environments.enum';
+
 export const environment = {
-  production: false
+  environment: Environments.Development,
+  backendServerAddress: 'http://localhost:5000',
 };
 
 /*

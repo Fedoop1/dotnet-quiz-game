@@ -5,9 +5,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:dev": "ng build --configuration development",
+    "build:prod": "ng build --configuration production",
+    "build:azure": "ng build --configuration azure",
     "watch": "ng build --watch --configuration development",
-    "build:wwwroot": "ng build --output-path ../wwwroot",
-    "watch:wwwroot": "ng build --output-path ../wwwroot --watch",
     "test": "ng test"
   },
   "private": true,

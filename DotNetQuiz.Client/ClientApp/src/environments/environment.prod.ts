@@ -1,3 +1,6 @@
+import { Environments } from './enums/environments.enum';
+
 export const environment = {
-  production: true
+  environment: Environments.Production,
+  backendServerAddress: 'http://localhost:5000',
 };

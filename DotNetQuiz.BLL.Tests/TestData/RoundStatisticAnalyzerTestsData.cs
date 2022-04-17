@@ -9,6 +9,15 @@ internal class RoundStatisticAnalyzerTestsData
     {
         yield return new TestCaseData(new QuizRound()
         {
+            Answers = Array.Empty<QuizPlayerAnswer>()
+        }, new RoundStatistic()
+        {
+            AnswerStatistic = new Dictionary<string, int>(),
+            AverageAnswerTime = TimeSpan.FromMilliseconds(0),
+        });
+
+        yield return new TestCaseData(new QuizRound()
+        {
             Answers = new QuizPlayerAnswer[]
             {
                 new()

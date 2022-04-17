@@ -26,11 +26,11 @@ internal class QuizQuestionHandlerTests
     [Test]
     public void NextQuestion_DefaultComparison_ReturnQuestionWithLowestId()
     {
-        var currentQuestion = this.questionsHandler.NextQuestion(quizQuestions);
-        var expectedResult = this.quizQuestions.First((qq) =>
-            qq.QuestionId == quizQuestions.GetLowest(Comparer<QuizQuestion>.Default).QuestionId);
+        var quizQuestion = this.questionsHandler.NextQuestion(quizQuestions);
 
-        Assert.That(currentQuestion, Is.EqualTo(expectedResult));
+        var questionWithLowestId = quizQuestions.GetLowest((lhs, rhs) => lhs.QuestionId - rhs.QuestionId);
+
+        Assert.That(quizQuestion!.QuestionId, Is.EqualTo(questionWithLowestId.QuestionId));
     }
 }
 
