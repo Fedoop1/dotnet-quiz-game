@@ -18,12 +18,22 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
         public async void ProcessAnswer(string sessionId, QuizPlayerAnswer answer)
         {
             this.LogProcessAnswer(sessionId, this.Context.ConnectionId);
-            var sessionHandler = this.handlersManager.GetSessionHandler(Guid.Parse(sessionId));
 
-            if (sessionHandler == null) return;
+            try
+            {
+                var sessionHandler = this.handlersManager.GetSessionHandler(Guid.Parse(sessionId));
 
-            sessionHandler.SubmitAnswer(answer);
-            await this.Clients.OthersInGroup(sessionId).ProcessAnswer(new QuizPlayerModel { Id = answer.PlayerId });
+                if (sessionHandler == null) return;
+
+                sessionHandler.SubmitAnswer(answer);
+                await this.Clients.OthersInGroup(sessionId).ProcessAnswer(new QuizPlayerModel { Id = answer.PlayerId });
+            }
+            catch (Exception e)
+            {
+                // TODO: Add error method calling
+                this.LogError(sessionId, nameof(e), e.Message); throw;
+            }
+            
         }
 
         public async Task ChangeSessionState(string sessionId, SessionState sessionState)
@@ -178,6 +188,9 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
 
         [LoggerMessage(11, LogLevel.Information, "Change session state. Session id: {sessionId}. Session state {sessionState}.")]
         private partial void LogChangeSessionState(string sessionId, string sessionState);
+
+        [LoggerMessage(12, LogLevel.Error, "An exception happened. Session id: {sessionId}. Exception: {exception}. Exception Message: {exceptionMessage}.")]
+        private partial void LogError(string sessionId, string exception, string exceptionMessage);
 
         #endregion
     }
