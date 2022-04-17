@@ -5,6 +5,7 @@ pool: 'DotNetQuiz Agent Pool'
 
 variables:
   buildConfiguration: 'Release'
+  dotnetVesrion: '6.0'
 
 steps:
 
