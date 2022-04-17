@@ -1,0 +1,65 @@
+trigger:
+- main
+
+pool: 'DotNetQuiz Agent Pool'
+
+variables:
+   buildConfiguration: 'Release'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '6.x'
+    includePreviewVersions: true
+  displayName: 'Install .NET Core SDK'
+
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'dotnet build of DotNetQuiz sln. Configuration --$(buildConfiguration)'
+
+- task: VSTest@2
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*test*.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    testRunTitle: 'DotNetQuiz VS Tests'
+    failOnMinTestsNotRun: false
+  displayName: 'Run solution VS tests'
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: '$(System.DefaultWorkingDirectory)/DotNetQuiz.Client/ClientApp'
+    verbose: true
+  displayName: 'Install NPM packages for DotNetQuiz.Client'
+
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: '$(System.DefaultWorkingDirectory)/DotNetQuiz.Client/ClientApp'
+    customCommand: 'run build:azure'
+  displayName: 'Build DotNetQuiz.Client for Azure deployment'
+
+- task: FtpUpload@2
+  inputs:
+    credentialsOption: 'serviceEndpoint'
+    serverEndpoint: 'DotNetQuiz AppService FTP'
+    rootDirectory: '$(System.DefaultWorkingDirectory)/DotNetQuiz.Client/ClientApp/dist'
+    filePatterns: '**'
+    remoteDirectory: 
+    clean: true
+    preservePaths: false
+    trustSSL: false
+  displayName: 'Publishing DotNetQuiz Client static content to Azure AppService wwwroot folder'
+
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Visual Studio Professional Subscription (4412be84-a354-4746-9336-9ef012f2be8e)'
+    appType: 'webApp'
+    WebAppName: 'DotNetQuizWebApi'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/DotNetQuiz.WebApi/bin/$(buildConfiguration)/'
+  displayName: 'Publishing DotNetQuiz Web API to Azure AppService'
+
