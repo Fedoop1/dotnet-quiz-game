@@ -1,28 +1,62 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
 trigger:
 - main
 
-pool:
-  vmImage: ubuntu-latest
+pool: 'DotNetQuiz Agent Pool'
+
+variables:
+   buildConfiguration: 'Release'
+   dotnetVesrion: '6.0'
 
 steps:
-- task: NodeTool@0
+- task: UseDotNet@2
   inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+    packageType: 'sdk'
+    version: '$(dotnetVesrion).x'
+    includePreviewVersions: true
+    performMultiLevelLookup: true
+  displayName: 'Install .NET Core SDK'
 
-- script: |
-    npm install
-    npm run build:azure
-  displayName: 'npm install and build DotNetQuizClient in Azure configuration'
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'dotnet build of DotNetQuiz sln. Configuration --$(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**/*.csproj'
+  displayName: 'dotnet test of DotNetQuiz sln.'
+
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: '$(System.DefaultWorkingDirectory)/DotNetQuiz.Client/ClientApp'
+    verbose: true
+  displayName: 'Install NPM packages for DotNetQuiz.Client'
+
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: '$(System.DefaultWorkingDirectory)/DotNetQuiz.Client/ClientApp'
+    customCommand: 'run build:azure'
+  displayName: 'Build DotNetQuiz.Client for Azure deployment'
 
 - task: FtpUpload@2
-  displayName: 'FTP Upload to App Service'
   inputs:
+    credentialsOption: 'serviceEndpoint'
     serverEndpoint: 'DotNetQuiz AppService FTP'
-    rootDirectory: 'DotNetQuiz.Client\ClientApp\dist'
-    remoteDirectory: '\'
+    rootDirectory: '$(System.DefaultWorkingDirectory)/DotNetQuiz.Client/ClientApp/dist'
+    filePatterns: '**'
+    remoteDirectory: '/site/wwwroot'
+    clean: false
+    cleanContents: true
+    preservePaths: false
+    trustSSL: false
+  displayName: 'Publishing DotNetQuiz Client static content to Azure AppService wwwroot folder'
+
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'PublishProfile'
+    PublishProfilePath: '$(System.DefaultWorkingDirectory)/DotNetQuiz.WebApi/Properties/PublishProfiles/*.pubxml'
+    PublishProfilePassword: '$(DotNetQuiz_PublishProfile_Password)'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/DotNetQuiz.WebApi/bin/$(buildConfiguration)/net$(dotnetVesrion)/'
+  displayName: 'Publishing DotNetQuiz Web API to Azure AppService'
+
