@@ -18,6 +18,7 @@ export class QuestionComponent {
   public QuestionType = QuestionType;
 
   @ViewChild('canvas') canvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('quizInput') input!: ElementRef<HTMLInputElement>;
 
   @Input() quizRound!: QuizRound;
   @Input() submitAnswer!: (answer: string) => void;
@@ -38,6 +39,11 @@ export class QuestionComponent {
 
   public set canvasHeight(height: number) {
     this.canvas.nativeElement.height = height;
+  }
+
+  public submitInputAnswerClick(answer: string) {
+    this.input.nativeElement.value = '';
+    this.submitAnswer(answer);
   }
 
   public displayQuestion() {

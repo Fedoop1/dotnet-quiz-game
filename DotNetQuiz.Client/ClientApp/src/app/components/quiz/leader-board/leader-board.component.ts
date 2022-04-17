@@ -14,7 +14,8 @@ export class LeaderBoardComponent
   implements OnInit
 {
   public quizPlayers: QuizPlayer[] = [];
-  public sortByScore = (lhs: QuizPlayer, rhs: QuizPlayer) => {
+
+  public orderByScore = (lhs: QuizPlayer, rhs: QuizPlayer) => {
     if (!lhs.score && !rhs.score) {
       return 0;
     }

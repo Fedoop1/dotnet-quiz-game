@@ -21,7 +21,7 @@ import { QuizHostComponent } from './components/quiz/host/quiz-host.component';
 import { QuizComponent } from './components/quiz/player/quiz.component';
 import { RoundStatisticComponent } from './components/quiz/round-statistic/round-statistic.component';
 import { LeaderBoardComponent } from './components/quiz/leader-board/leader-board.component';
-import { SortPipe } from './components/quiz/leader-board/pipes/sort.pipe';
+import { OrderByPipe } from './components/quiz/leader-board/pipes/orderBy.pipe';
 import { MatTabsModule } from '@angular/material/tabs';
 import { QuestionComponent } from './components/quiz/question/question.component';
 import { QuestionTypePipe } from './components/quiz/host/pipes/question-type.pipe';
@@ -48,7 +48,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     RoundTimerComponent,
     QuestionListComponent,
     // Pipes
-    SortPipe,
+    OrderByPipe,
     QuestionTypePipe,
     DateFormatterPipe,
   ],
