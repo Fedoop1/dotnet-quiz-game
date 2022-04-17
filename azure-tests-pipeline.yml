@@ -1,0 +1,23 @@
+trigger:
+- main
+
+pool: 'DotNetQuiz Agent Pool'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '$(dotnetVesrion).x'
+    includePreviewVersions: true
+    performMultiLevelLookup: true
+  displayName: 'Install .NET Core SDK'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**/*.csproj'
+    testRunTitle: 'Run DotNetQuiz solution tests'
