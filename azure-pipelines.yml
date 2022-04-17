@@ -49,7 +49,8 @@ steps:
     rootDirectory: '$(System.DefaultWorkingDirectory)/DotNetQuiz.Client/ClientApp/dist'
     filePatterns: '**'
     remoteDirectory: '/'
-    clean: true
+    clean: false
+    cleanContents: true
     preservePaths: false
     trustSSL: false
   displayName: 'Publishing DotNetQuiz Client static content to Azure AppService wwwroot folder'
