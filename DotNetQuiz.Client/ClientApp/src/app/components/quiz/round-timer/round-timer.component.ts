@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'round-timer',
@@ -14,6 +14,8 @@ export class RoundTimerComponent {
   @Input() startAt: Date = new Date();
   @Input() endAt: Date = new Date();
   @Input() kind: 'spinner' | 'progressBar' = 'spinner';
+
+  @Output() timeIsUp = new EventEmitter<void>();
 
   public get roundProgress(): number {
     const totalSeconds = (this.endAt.getTime() - this.startAt.getTime()) / 1000;
@@ -42,5 +44,9 @@ export class RoundTimerComponent {
 
     this.secondsLeft = Math.floor(leftInSeconds % 60);
     this.minutesLeft = Math.floor(leftInSeconds / 60);
+
+    if (leftInSeconds == 0) {
+      this.timeIsUp.emit();
+    }
   }
 }

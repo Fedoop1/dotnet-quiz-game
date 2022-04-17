@@ -18,6 +18,7 @@
           [kind]="'progressBar'"
           [startAt]="quizRound.startAt!"
           [endAt]="quizRound.endAt!"
+          (timeIsUp)="onTimeIsUp()"
         ></round-timer>
       </div>
     </ng-container>

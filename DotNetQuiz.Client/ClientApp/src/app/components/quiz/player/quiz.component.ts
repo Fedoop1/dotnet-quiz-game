@@ -77,6 +77,10 @@ export class QuizComponent extends DestroyableComponent implements OnInit {
     this.setupSubscribers();
   }
 
+  public onTimeIsUp() {
+    this.isButtonDisabled = true;
+  }
+
   private setupSubscribers() {
     this.quizService.sessionState$
       .pipe(

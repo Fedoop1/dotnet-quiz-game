@@ -7,12 +7,14 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { QuizSession } from '../components/join-session/models/quiz-session.model';
 import { SessionState } from '../models/enums/round-state.enum.model';
+import { ErrorNotification } from '../models/error-notification.model';
 import { QuizConfiguration } from '../models/quiz-configuration.model';
 import { QuizPlayerAnswer } from '../models/quiz-player-answer.model';
 import { QuizPlayer } from '../models/quiz-player.model';
 import { Question } from '../models/quiz-question.model';
 import { QuizRound } from '../models/quiz-round.model';
 import { RoundStatistic } from '../models/round-statistic.model';
+import { ErrorNotificationService } from './error-notification.service';
 
 @Injectable()
 export class QuizService implements OnDestroy {
@@ -30,7 +32,8 @@ export class QuizService implements OnDestroy {
 
   constructor(
     private readonly httpClient: HttpClient,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
+    private readonly errorNotificationService: ErrorNotificationService
   ) {}
 
   ngOnDestroy(): void {
@@ -209,6 +212,10 @@ export class QuizService implements OnDestroy {
     this.quizHubConnection?.on('processAnswer', (player: QuizPlayer) => {
       this._processAnswer$.next(player);
     });
+
+    this.quizHubConnection?.on('error', (error: ErrorNotification) =>
+      this.errorNotificationService.showErrorNotification(error)
+    );
   }
 
   private catchResponseError(error: HttpErrorResponse) {
