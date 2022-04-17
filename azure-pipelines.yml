@@ -54,10 +54,9 @@ steps:
 
 - task: AzureRmWebAppDeployment@4
   inputs:
-    ConnectionType: 'AzureRM'
-    azureSubscription: 'Visual Studio Professional Subscription (4412be84-a354-4746-9336-9ef012f2be8e)'
-    appType: 'webApp'
-    WebAppName: 'DotNetQuizWebApi'
+    ConnectionType: 'PublishProfile'
+    PublishProfilePath: '$(System.DefaultWorkingDirectory)/DotNetQuiz.WebApi/Properties/PublishProfiles/*.pubxml'
+    PublishProfilePassword: '$(DotNetQuiz_PublishProfile_Password)'
     packageForLinux: '$(System.DefaultWorkingDirectory)/DotNetQuiz.WebApi/bin/$(buildConfiguration)/net$(dotnetVesrion)/'
   displayName: 'Publishing DotNetQuiz Web API to Azure AppService'
 
