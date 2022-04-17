@@ -19,24 +19,11 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build of DotNetQuiz sln. Configuration --$(buildConfiguration)'
 
-- task: VisualStudioTestPlatformInstaller@1
+- task: DotNetCoreCLI@2
   inputs:
-    packageFeedSelector: 'nugetOrg'
-    versionSelector: 'latestStable'
+    command: 'test'
+    projects: '**/*.csproj'
 
-- task: VSTest@2
-  inputs:
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      **\*test*.dll
-      !**\*TestAdapter.dll
-      !**\obj\**
-    searchFolder: '$(System.DefaultWorkingDirectory)'
-    resultsFolder: '$(Agent.BuildDirectory)\TestResults'
-    vsTestVersion: 'toolsInstaller'
-    testRunTitle: 'DotNetQuiz VS Tests'
-    failOnMinTestsNotRun: false
-  displayName: 'Run solution VS tests'
 - task: Npm@1
   inputs:
     command: 'install'
@@ -70,6 +57,6 @@ steps:
     azureSubscription: 'Visual Studio Professional Subscription (4412be84-a354-4746-9336-9ef012f2be8e)'
     appType: 'webApp'
     WebAppName: 'DotNetQuizWebApi'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/DotNetQuiz.WebApi/bin/$(buildConfiguration)/net(dotnetVesrion)/'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/DotNetQuiz.WebApi/bin/$(buildConfiguration)/net$(dotnetVesrion)/'
   displayName: 'Publishing DotNetQuiz Web API to Azure AppService'
 
