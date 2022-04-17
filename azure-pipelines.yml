@@ -48,7 +48,7 @@ steps:
     serverEndpoint: 'DotNetQuiz AppService FTP'
     rootDirectory: '$(System.DefaultWorkingDirectory)/DotNetQuiz.Client/ClientApp/dist'
     filePatterns: '**'
-    remoteDirectory: 
+    remoteDirectory: '/'
     clean: true
     preservePaths: false
     trustSSL: false
