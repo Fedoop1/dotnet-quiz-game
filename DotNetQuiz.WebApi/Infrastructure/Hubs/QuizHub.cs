@@ -30,7 +30,7 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
             catch (Exception e)
             {
                 this.LogError(nameof(e), e.Message);
-                this.Error(new HubError("Answer processing error", e.Message));
+                await this.Error(new HubError("Answer processing error", e.Message));
             }
         }
 
@@ -44,7 +44,7 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
             catch (Exception e)
             {
                 this.LogError(nameof(e), e.Message);
-                this.Error(new HubError("Session state changing error", e.Message));
+                await this.Error(new HubError("Session state changing error", e.Message));
             }
         }
 
@@ -143,7 +143,7 @@ namespace DotNetQuiz.WebApi.Infrastructure.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        private void Error(HubError hubError) => Task.Run(() => Clients.Caller.Error(hubError));
+        private Task Error(HubError hubError) => Clients.Caller.Error(hubError);
 
         private bool TryExtractRouteData(out (Guid sessionId, string nickName, bool isHost) routeData)
         {
