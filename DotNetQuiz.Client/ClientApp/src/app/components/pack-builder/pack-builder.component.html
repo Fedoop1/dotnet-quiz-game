@@ -1,0 +1,52 @@
+<div class="pack-builder">
+  <div>
+    <div class="pack-builder-header">
+      <h1>Question pack builder</h1>
+    </div>
+    <div *ngIf="showErrorMessage">
+      <div class="validation-error-container">
+        <ul>
+          <li>Question pack must have at least one question.</li>
+          <li>All questions must have reward greater than 0.</li>
+          <li>All questions with select type must have at least one option.</li>
+          <li>All questions must have text or blob content.</li>
+          <li>All question must have question answer and type.</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="container container-center">
+        <button mat-icon-button (click)="addQuestionClick()">
+          <mat-icon>note_add</mat-icon>
+        </button>
+      </div>
+      <div class="pack-builder-questions-container">
+        <div
+          *ngFor="let question of questionPack.questions"
+          class="pack-builder-questions-container-item"
+        >
+          <div class="pack-builder-questions-container-item-controls-container">
+            <button
+              mat-icon-button
+              (click)="removeQuestionClick(question.questionId)"
+            >
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </div>
+          <question-editor [question]="question"></question-editor>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="buttons-container">
+    <button class="common-button common-button__back" (click)="onCloseClick()">
+      Close
+    </button>
+    <button
+      class="common-button common-button__confirmation"
+      (click)="onSaveClick()"
+    >
+      Save
+    </button>
+  </div>
+</div>

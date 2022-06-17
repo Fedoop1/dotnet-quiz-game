@@ -1,0 +1,151 @@
+<div class="question-editor">
+  <div class="question-editor-header">
+    <h1>{{ "Question " + question.questionId }}</h1>
+  </div>
+  <div>
+    <div class="common-control">
+      <label class="input-label">Question Type</label>
+      <select
+        class="common-control-select"
+        [(ngModel)]="question.questionType"
+        (change)="questionTypeChange()"
+      >
+        <option
+          *ngFor="let questionType of questionsTypeInfoModels"
+          [ngValue]="questionType.value"
+        >
+          {{ questionType.name }}
+        </option>
+      </select>
+    </div>
+    <div class="common-control">
+      <label class="input-label">Question content type</label>
+      <div>
+        <label for="textContentType" class="input-label">Text</label>
+        <input
+          type="radio"
+          id="textContentType"
+          name="contentType"
+          class="common-input-radio"
+          [value]="QuestionContentType.Text"
+          [(ngModel)]="questionContentType"
+          (change)="questionContentTypeChange()"
+        />
+        <label for="blobContentType" class="input-label">Blob</label>
+        <input
+          type="radio"
+          id="blobContentType"
+          name="contentType"
+          class="common-input-radio"
+          [value]="QuestionContentType.Blob"
+          [(ngModel)]="questionContentType"
+          (change)="questionContentTypeChange()"
+        />
+      </div>
+    </div>
+    <ng-container [ngSwitch]="questionContentType">
+      <div *ngSwitchCase="QuestionContentType.Text" class="common-control">
+        <label class="input-label">Question text content</label>
+        <input
+          name="question-text"
+          type="text"
+          required
+          class="common-input"
+          placeholder="Question Content"
+          [minlength]="1"
+          [maxlength]="100"
+          [(ngModel)]="question.content.questionText"
+        />
+      </div>
+      <div
+        *ngSwitchCase="QuestionContentType.Blob"
+        class="container"
+        class="common-control"
+      >
+        <label for="question-blob" class="input-label input-label--file"
+          >Question image</label
+        >
+        <input
+          id="question-blob"
+          type="file"
+          required
+          accept="image/*"
+          (change)="questionContentFileChange($event)"
+        />
+      </div>
+    </ng-container>
+    <div class="common-control">
+      <label class="input-label">Question Reward</label>
+      <input
+        type="number"
+        [min]="0"
+        [max]="1000"
+        class="common-input"
+        [(ngModel)]="question.questionReward"
+      />
+    </div>
+    <div>
+      <label class="input-label">Answer configuration</label>
+      <ng-container [ngSwitch]="question.questionType">
+        <ng-container
+          *ngSwitchCase="QuestionType.Select"
+          [ngTemplateOutlet]="select"
+        ></ng-container>
+        <ng-container
+          *ngSwitchDefault
+          [ngTemplateOutlet]="default"
+        ></ng-container>
+      </ng-container>
+    </div>
+    <div class="common-control">
+      <label class="input-label">Question Answer</label>
+      <input
+        type="text"
+        class="common-input"
+        placeholder="Question Answer"
+        required
+        [minLength]="1"
+        [maxLength]="100"
+        [(ngModel)]="question.answer.answerContent"
+      />
+    </div>
+  </div>
+</div>
+
+<ng-template #select>
+  <div>
+    <div class="buttons-container">
+      <label class="input-label">Options:</label>
+      <button (click)="addQuestionOptionClick()" mat-icon-button>
+        <mat-icon>add_to_photos</mat-icon>
+      </button>
+    </div>
+    <div
+      *ngFor="let option of question.options; index as $index"
+      class="common-control"
+    >
+      <input
+        #optionControl
+        type="text"
+        placeholder="Question Option"
+        required
+        class="common-input"
+        [minlength]="1"
+        [maxLength]="100"
+        [ngModel]="question.options[$index]"
+      />
+      <button mat-button (click)="removeOptionClick($index)">
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button mat-button (click)="saveOptionClick($index, optionControl.value)">
+        <mat-icon>save</mat-icon>
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #default>
+  <div class="text-center question-editor-default-container">
+    <h3>There is no configuration for this type of questions</h3>
+  </div>
+</ng-template>

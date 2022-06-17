@@ -1,0 +1,28 @@
+.mat-dialog-container {
+    background-color: rgb(95, 15, 15);
+    color: rgb(201, 197, 192) !important;
+}
+
+.pack-builder {
+    height: 100%;
+
+    &-questions-container {
+        min-height: 400px;
+
+        &-item {
+            background-color: rgb(70, 12, 12);
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+
+            &-controls-container {
+                display: flex;
+                justify-content: center;
+            }
+        }
+    }
+
+    &-header {
+        text-align: center;
+    }
+}
