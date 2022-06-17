@@ -1,4 +1,4 @@
 export interface RoundStatistic {
   averageAnswerTime: number;
-  answerStatistic: Record<string, number>;
+  answerStatistic: { key: string; value: number }[];
 }
