@@ -2,6 +2,7 @@
 @import "styles/container";
 @import "styles/control";
 @import "styles/variables";
+@import "styles/text";
 
 html,
 body {
@@ -22,3 +23,8 @@ body {
 .table {
   color: rgb(201, 197, 192);
 }
+
+.ng-touched.ng-dirty.ng-invalid {
+  border: 2px solid #c4240c;
+}
+

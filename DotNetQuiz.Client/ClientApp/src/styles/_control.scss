@@ -1,17 +1,29 @@
 .common-control {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   margin: 20px 0px;
 
-  &-file {
-    display: flex;
-    align-content: space-between;
+  &--pull-right {
+    justify-content: flex-end;
+  }
+
+  &-select {
+    width: 50%;
   }
 }
 
 .common-input {
   border-radius: 6px;
   border-width: 0px;
+
+  &-file {
+    width: 100%;
+  }
+
+  &-radio:not(:last-of-type) {
+    margin-right: 7px;
+  }
 
   &--invalid {
     border-radius: 3px;
@@ -23,7 +35,7 @@
   margin-right: 8px;
   font-size: 18px;
 
-  &-file {
+  &--file {
     width: 100%;
   }
 }
