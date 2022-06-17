@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 
 @Component({
   selector: 'round-timer',
@@ -16,6 +22,8 @@ export class RoundTimerComponent {
   @Input() kind: 'spinner' | 'progressBar' = 'spinner';
 
   @Output() timeIsUp = new EventEmitter<void>();
+
+  constructor(private readonly cdr: ChangeDetectorRef) {}
 
   public get roundProgress(): number {
     const totalSeconds = (this.endAt.getTime() - this.startAt.getTime()) / 1000;
@@ -48,5 +56,7 @@ export class RoundTimerComponent {
     if (leftInSeconds == 0) {
       this.timeIsUp.emit();
     }
+
+    this.cdr.markForCheck();
   }
 }

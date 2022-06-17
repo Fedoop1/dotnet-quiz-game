@@ -38,6 +38,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { HttpErrorInterceptor } from './utils/http-error.interceptor';
 import { ErrorNotificationComponent } from './utils/error-notification/error-notification.component';
 import { ErrorNotificationService } from './services/error-notification.service';
+import { PackBuilderComponent } from './components/pack-builder/pack-builder.component';
+import { QuestionEditorComponent } from './components/question-editor/question-editor.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -55,6 +59,8 @@ import { ErrorNotificationService } from './services/error-notification.service'
     RoundTimerComponent,
     QuestionListComponent,
     ErrorNotificationComponent,
+    PackBuilderComponent,
+    QuestionEditorComponent,
     // Pipes
     OrderByPipe,
     QuestionTypePipe,
@@ -74,6 +80,9 @@ import { ErrorNotificationService } from './services/error-notification.service'
     MatTabsModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
+    MatIconModule,
+    MatDialogModule,
+    NgxChartsModule,
   ],
   exports: [MatIconModule, MatButtonModule],
   providers: [
