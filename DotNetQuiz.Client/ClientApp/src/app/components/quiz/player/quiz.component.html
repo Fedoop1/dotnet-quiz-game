@@ -26,7 +26,10 @@
       <leader-board [sessionId]="quizData.sessionId"></leader-board>
     </ng-container>
     <ng-container *ngIf="sessionState === SessionState.RoundStatistic"
-      ><round-statistic [sessionId]="quizData.sessionId"></round-statistic
+      ><round-statistic
+        [sessionId]="quizData.sessionId"
+        size="lg"
+      ></round-statistic
     ></ng-container>
   </div>
 </div>

@@ -1,8 +1,11 @@
-import { Component, destroyPlatform, Input, OnInit } from '@angular/core';
-import { takeUntil, tap } from 'rxjs/operators';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Color } from 'chart.js';
+import * as _ from 'lodash';
+import { finalize, takeUntil, tap } from 'rxjs/operators';
 import { RoundStatistic } from 'src/app/models/round-statistic.model';
 import { QuizService } from 'src/app/services/quiz.service';
 import { DestroyableComponent } from 'src/app/utils/destroyable-component/destroyable.component';
+import { ChartData } from './models/chart-data.model';
 
 @Component({
   selector: 'round-statistic',
@@ -14,10 +17,11 @@ export class RoundStatisticComponent
   implements OnInit
 {
   public roundStatistic!: RoundStatistic;
+  public chartData: ChartData[] = [];
 
   @Input() sessionId!: string;
+  @Input() size!: 'sm' | 'md' | 'lg';
 
-  //TODO: Add round statistic displaying
   constructor(private readonly quizService: QuizService) {
     super();
   }
@@ -30,12 +34,24 @@ export class RoundStatisticComponent
     this.loadData();
   }
 
-  private loadData() {
+  public loadData() {
     this.quizService
       .getRoundStatistic(this.sessionId)
       .pipe(
         takeUntil(this.onDestroy$),
-        tap((roundStatistic) => (this.roundStatistic = roundStatistic))
+        tap((roundStatistic) => {
+          this.roundStatistic = roundStatistic;
+          this.chartData =
+            roundStatistic.answerStatistic &&
+            roundStatistic.answerStatistic.length
+              ? roundStatistic.answerStatistic.map(({ key, value }) => {
+                  return {
+                    name: key,
+                    value: value,
+                  };
+                })
+              : [];
+        })
       )
       .subscribe();
   }

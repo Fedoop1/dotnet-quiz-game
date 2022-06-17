@@ -1,1 +1,20 @@
-<p>ROUND STATISTIC</p>
+<div
+  class="round-statistic"
+  [class.round-statistic-sm]="size === 'sm'"
+  [class.round-statistic-md]="size === 'md'"
+  [class.round-statistic-lg]="size === 'lg'"
+>
+  <button mat-icon-button (click)="updateData()">
+    <mat-icon>refresh</mat-icon>
+  </button>
+
+  <ng-container *ngIf="chartData.length"
+    ><ngx-charts-pie-chart [labels]="true" [results]="chartData">
+    </ngx-charts-pie-chart
+  ></ng-container>
+  <ng-container *ngIf="!chartData.length">
+    <div class="text-center">
+      <h1>Sorry, but there is no any statistic yet</h1>
+    </div>
+  </ng-container>
+</div>
