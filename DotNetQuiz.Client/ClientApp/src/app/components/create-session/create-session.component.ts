@@ -6,10 +6,13 @@ import {
   Router,
 } from '@angular/router';
 import { NEVER } from 'rxjs';
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { catchError, filter, finalize, tap } from 'rxjs/operators';
 import { QuizConfiguration } from 'src/app/models/quiz-configuration.model';
 import { QuizConfigurationService } from 'src/app/services/quiz-configuration.service';
 import { QuizService } from 'src/app/services/quiz.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { PackBuilderComponent } from '../pack-builder/pack-builder.component';
+import { QuestionPack } from 'src/app/models/quiz-question-pack.model';
 
 @Component({
   selector: 'create-session',
@@ -28,10 +31,15 @@ export class CreateSessionComponent {
   public isShowValidationError: boolean = false;
   public errorMessage?: string;
 
+  public get isQuestionPackSelected(): boolean {
+    return !!this.quizConfiguration.questionPack;
+  }
+
   constructor(
     private readonly quizService: QuizService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly dialog: MatDialog,
     private readonly quizConfigurationService: QuizConfigurationService
   ) {}
 
@@ -47,6 +55,39 @@ export class CreateSessionComponent {
         tap(
           (questionPack) => (this.quizConfiguration.questionPack = questionPack)
         )
+      )
+      .subscribe();
+  }
+
+  public downloadClick() {
+    const anchor = document.createElement('a');
+    const encodedPack = encodeURIComponent(
+      JSON.stringify(this.quizConfiguration.questionPack)
+    );
+
+    anchor.setAttribute('href', 'data:text/json;charset=utf-8,' + encodedPack);
+    anchor.setAttribute('download', 'question_pack.json');
+    anchor.click();
+  }
+
+  public onQuestionPackClick() {
+    const modalRef = this.dialog.open<
+      PackBuilderComponent,
+      QuestionPack | undefined,
+      QuestionPack | undefined
+    >(PackBuilderComponent, {
+      data: this.quizConfiguration.questionPack,
+      width: '500px',
+      minHeight: 500,
+      maxHeight: 840,
+      disableClose: true,
+    });
+
+    modalRef
+      .afterClosed()
+      .pipe(
+        filter((result) => !!result),
+        tap((result) => (this.quizConfiguration.questionPack = result))
       )
       .subscribe();
   }

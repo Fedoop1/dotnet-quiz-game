@@ -25,10 +25,10 @@
           Streak multiplier:
         </label>
         <input
+          type="text"
           name="streakMultiplier"
           class="common-input"
           [(ngModel)]="quizConfiguration.streakMultiplier"
-          type="text"
         />
       </div>
       <div class="common-control">
@@ -53,17 +53,44 @@
           type="checkbox"
         />
       </div>
-      <div class="common-control-file">
-        <label for="questionPack" class="input-label input-label-file">
-          Upload Question Pack
-        </label>
-        <input
-          name="questionPack"
-          class="common-input"
-          (change)="onQuestionPackChange($event)"
-          type="file"
-          [accept]="'.json'"
-        />
+      <div>
+        <div class="container container-center">
+          <p class="input-label"><b>Question pack configuration</b></p>
+        </div>
+        <div class="buttons-container create-session-buttons-container">
+          <div>
+            <input
+              #questionPackUploader
+              name="questionPack"
+              class="common-input-file"
+              type="file"
+              accept=".json"
+              [hidden]="true"
+              (change)="onQuestionPackChange($event)"
+            />
+          </div>
+          <div
+            class="container container-icon"
+            (click)="questionPackUploader.click()"
+          >
+            <p>Upload</p>
+            <button mat-icon-button>
+              <mat-icon>cloud_upload</mat-icon>
+            </button>
+          </div>
+          <div class="container container-icon" (click)="downloadClick()">
+            <p>Download</p>
+            <button mat-icon-button [disabled]="!isQuestionPackSelected">
+              <mat-icon>cloud_download</mat-icon>
+            </button>
+          </div>
+          <div class="container container-icon" (click)="onQuestionPackClick()">
+            <p>{{ isQuestionPackSelected ? "Edit" : "Build" }}</p>
+            <button mat-icon-button>
+              <mat-icon>build</mat-icon>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <div *ngIf="isShowValidationError" class="validation-error-container">
